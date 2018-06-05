@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block main %}
+<!-- Table -->
+<ul class="nav nav-tabs" role="tablist">
+  {% if action == 'create' %}
+      <li role="presentation">
+        <a href="{{ url_for('admin.role') }}">
+          <i class="fa fa-table"></i>
+        </a>
+      </li>
+      <li role="presentation" class="active">
+        <a>
+          <i class="fa fa-plus"></i>
+        </a>
+      </li>
+  {% elif action == 'edit' %}
+    <li role="presentation">
+      <a href="{{ url_for('admin.role') }}">
+        <i class="fa fa-table"></i>
+      </a>
+    </li>
+    <li role="presentation" class="active">
+      <a><i class="fa fa-pencil"></i></a>
+    </li>
+  {% else %}
+      <li role="presentation" class="active"><a href="#"><i class="fa fa-table"></i></a></li>
+      <li role="presentation">
+        <a href="{{ url_for('admin.role', action='create') }}"><i class="fa fa-plus"></i></a>
+      </li>
+  {% endif %}
+</ul>
+{% if action == 'create' %}
+  <div class="col-md-6 col-sm-6 col-sm-offset-2 col-md-offset-2" style="padding-top: 20px;">
+    <form role="form" method="post" action="{{ url_for('admin.role') }}">
+      <div class="form-group">
+        <label class="st-label" for="role-name">Role Name</label>
+        <input type="text" class="form-control" id="role-name" name="name" placeholder="Enter Role Name" required autocomplete="off">
+      </div>   
+      <div class="form-group">
+        <select class="form-control" id="select-resources" name="resources" multiple="">
+          {% for res in resources %}
+            <option value="{{ res.id }}">{{ res.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group box2">
+        <label for="preset">Preset</label>&nbsp;
+        <input type="checkbox" name="preset" id="preset">
+      </div>
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  </div>
+{% elif action == 'edit' %}
+<div class="col-md-6 col-sm-6 col-sm-offset-2 col-md-offset-2" style="padding-top: 20px;">
+  <form role="form" method="post" action="{{ url_for('admin.role') }}">
+    <input type="hidden" name="action" value="edit">
+    <input type="hidden" name="id" value="{{ roleinfo.id }}">
+    <div class="form-group">
+      <label class="st-label" for="role-name">Role Name</label>
+      {% if roleinfo.preset %} <p>{{ roleinfo.name }}</p> {% else %}
+      <input type="text" class="form-control" id="role-name" name="name" placeholder="Enter Role Name" required autocomplete="off" value="{{ roleinfo.name }}">
+      {% endif %}
+    </div>
+    <div class="form-group">
+      <label for="role-users" class="st-label">Role Users</label>
+      {% for user in roleinfo.users %}
+        <p> {{ user.email }} </p>
+      {% endfor %}
+      </p>
+    </div>
+    <div class="form-group">
+      <label class="st-label" for="role-resources">Access Control</label>
+      <select class="form-control" id="select-resources" name="resources" multiple="">
+        {% for res in resources %}
+          {% if res in roleinfo.resources %}
+          <option value="{{ res.id }}" selected="">{{res.name}}</option>
+          {% else %}
+          <option value="{{ res.id }}">{{res.name}}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+    {% if not roleinfo.preset %}
+    <div class="form-group box2">
+      <label for="preset">Preset</label>&nbsp;
+      <input type="checkbox" name="preset" id="preset">
+    </div>
+    {% endif %}
+    {% if not roleinfo.preset %}
+      <button type="submit" class="btn btn-default">Submit</button>
+    {% endif %}
+  </form>
+</div>
+{% else %}
+  <div class="table-responsive">
+  <table class="table table-hover sortable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for r in roles %}
+            <tr>
+              <td>
+                {% if ID_ROOT == r.id %}
+                  <i class="fa fa-user-secret"></i>
+                {% else %}
+                  <i class="fa fa-user"></i>
+                {% endif %}
+                {{ r.name }}
+              </td>
+              <td>{{ r.description|default('n/a', True) }}</td>
+              <td>
+                <a
+                  href="{{ url_for('admin.role', id=r.id, action='edit')}}"
+                  class="btn btn-primary btn-xs"
+                  data-toggle="tooltip"
+                  title="edit">
+                  <i class="fa fa-pencil"></i>
+                </a>
+                {% if not r.preset %}
+                  <a
+                    href="#"
+                    class="btn btn-danger btn-xs"
+                    data-toggle="modal"
+                    data-target="#delete-role-modal-{{ loop.index }}"
+                    title="delete">
+                    <i class="fa fa-trash"></i>
+                  </a>
+                  <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="delete-role-modal-{{ loop.index }}">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                          <h4 class="modal-title">
+                          <span class="fa fa-trash fa-lg">
+                          </span>
+                          Delete Role
+                          </h4>
+                        </div>
+                        <div class="modal-body">
+                          <form class="form-inline" id="delete-role-form" action="{{ url_for('admin.role')}}" role="form" method="post">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="id" value="{{ r.id }}">
+                            <div class="tc-params-help">
+                              <span class="help-block">Are you sure to delete role? <br><b class="danger">{{ r.name }}</b></span>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary">Save changes</button>
+                            </div>
+                          </form>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+  </div>
+
+{% endif %}
+
+{% endblock %}
+{% block script %}
+    <script>
+        $(function(){
+            $('#sidebar-admin').addClass('metis-active')
+            .children('ul, a').attr('aria-expanded', 'true');
+            $("#sidebar-role").addClass("active")
+            .children('a').attr('href', 'javascript:;');
+        })
+    </script>
+{{ super() }}
+{% endblock %}

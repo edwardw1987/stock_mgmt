@@ -1,0 +1,135 @@
+/*
+* @Author: wangwh8
+* @Date:   2017-05-23 17:13:27
+* @Last Modified by:   wangwh8
+* @Last Modified time: 2018-05-30 13:51:56
+*/
+#selectpicker-layout {
+    margin-top: 10px;
+    padding-left: 0;
+}
+
+#container-layout {
+    /*mar*/
+    padding-left: 0;    
+}
+
+#mask {
+    content: ' ';
+    position: fixed;
+    width: 130px;
+    height: 130px;
+    left: 50%;
+    top: 50%;
+    transform: translate3d(-50%, -50%, 0);
+    background: #000;
+    opacity: .7;
+    z-index: 9999;
+    display: none;
+    border-radius: 10px;
+}
+#loading-icon {
+    width: 200px;
+    position: fixed;
+    top: 45%;
+    margin-left: -100px;
+    left:50%;
+    display: none;
+    z-index: 9999;
+    color:white;
+    text-align: center;
+}
+
+.del-btn {
+    display: none;
+}
+.del-btn-item:hover .del-btn{
+    display: block;
+}
+
+.danger {color:rgb(215,74,64); }
+
+.table td {
+    max-width: 250px;
+    word-wrap: break-word;
+}
+
+.form-group .st-label {
+    color: rgb(66,139,202);
+    font-style: italic;
+}
+
+.box1 label {
+    color: #999;
+}
+
+.box2 label {
+    color: rgb(66,139,202);
+    font-style: italic;    
+}
+
+#bug-list-modal {
+    font-size: 10px;
+}
+#bug-list-modal .modal-body {
+    max-height: 400px;
+    overflow-y: scroll;
+}
+/*sidebar style*/
+.nav-sidebar > li > ul > .active > a,
+.nav-sidebar > li > ul > .active > a:hover,
+.nav-sidebar > li > ul > .active > a:focus {
+    color: #fff;
+    background-color: #428bca;
+}
+.nav-sidebar > li > ul > li > a {
+  padding-right: 40px;
+  padding-left: 40px;
+}
+
+.nav-sidebar > li {
+    font-size: 14px;
+}
+.nav-sidebar > li > a{
+    font-size: 14px;
+}
+
+.panel-title > a {
+    text-decoration: none;
+}
+/*chart stuff*/
+div.table-responsive tr > td {
+    /*line-height: 34px;*/
+}
+#table-bugz-endpoint > tbody > tr > td:nth-child(1), 
+#table-bugz-apikey > tbody > tr > td:nth-child(1) {
+    max-width: 10px;        
+}
+#table-bugz-apikey > tbody > tr > td:nth-child(2) {
+    max-width: 20px;
+}
+#table-bugz-product > tbody > tr > td:nth-child(1) {
+    max-width: 80px;
+}
+.section {
+    padding-top: 60px;
+    padding-bottom: 15px;
+}
+.section-first{
+    padding-top: 0;
+}
+.sidebar-right {
+    position: fixed;
+    right: 0;
+    font-size: 15px;
+}
+#testreport th,
+#testreport tr,
+#testreport td,
+#testreport a {
+    font-size: 15px;
+}
+#new-item-modal .input-group-addon {
+
+    width: 20%;
+}

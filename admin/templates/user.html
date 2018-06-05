@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block main %}
+<!-- Table -->
+<ul class="nav nav-tabs" role="tablist">
+{% if action == 'edit' %}
+    <li role="presentation">
+      <a href="{{ url_for('admin.user') }}">
+        <i class="fa fa-table"></i>
+      </a>
+    </li>
+    <li role="presentation" class="active">
+      <a href="javascript:;"><i class="fa fa-pencil"></i></a>
+    </li>
+{% else %}
+    <li role="presentation" class="active">
+      <a href="javascript:;">
+        <i class="fa fa-table"></i>
+      </a>
+    </li>
+{% endif %}
+</ul>
+{% if action == 'edit' %}
+<div class="col-md-6 col-sm-6 col-sm-offset-2 col-md-offset-2" style="padding-top: 20px;">
+  <form role="form" method="post" action="{{ url_for('admin.user') }}">
+    <input type="hidden" name="id" value="{{ userinfo.id }}">
+    <div class="form-group">
+      <label class="st-label">Full Name</label>
+      <p>{{ userinfo.first_name }} {{ userinfo.last_name }}</p>
+    </div>
+    <div class="form-group">
+      <label class="st-label">Email</label>
+      <p>{{ userinfo.email }}</p>
+    </div>
+    <div class="form-group">
+      <label class="st-label" for="user-role">User Roles</label>
+      <select class="form-control" id="select-roles" name="role" multiple required>
+        {% for r in roles %}
+          {% if r in userinfo.roles %}
+          <option value="{{ r.id }}" selected="">{{ r.name }}</option>
+          {% else %}
+          <option value="{{ r.id }}">{{ r.name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-default">Submit</button>
+  </form>
+</div>
+{% else %}
+  <div class="table-responsive">
+  <table class="table table-hover sortable">
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for user in users %}
+            <tr>
+              <td>{{ user.first_name }} {{ user.last_name }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <a
+                  href="{{ url_for('admin.user', action='edit', id=user.id)}}"
+                  class="btn btn-primary btn-xs"
+                  data-toggle="tooltip"
+                  title="edit">
+                  <i class="fa fa-pencil"></i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+  </table>
+  </div>
+{% endif %}
+{% endblock %}
+{% block script %}
+    <script>
+        $(function(){
+            $('#sidebar-admin').addClass('metis-active')
+            .children('ul, a').attr('aria-expanded', 'true');
+            $("#sidebar-user").addClass("active")
+            .children('a').attr('href', 'javascript:;');
+        })
+    </script>
+{{ super() }}
+{% endblock %}

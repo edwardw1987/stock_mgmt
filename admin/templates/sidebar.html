@@ -1,0 +1,66 @@
+  <div class="col-sm-3 col-md-2 sidebar">
+    <div class="page-header" style="margin-top:0;border-bottom: 1px solid gray;">
+      <h4>Settings <small></small></h4>
+    </div>
+    <ul class="metismenu nav nav-sidebar" id="menu">
+      <li id="sidebar-admin">
+        <a class="has-arrow" href="#" aria-expanded="false">Admin</a>
+        <ul class="nav" aria-expanded="false">
+          {% if Resource.is_accessible('user') %}
+          <li id="sidebar-user">
+            <a href="{{ url_for('admin.user') }}">
+              <i class="fa fa-user-o"></i>&nbsp;User
+            </a>
+          </li>
+          {% endif %}
+          {% if Resource.is_accessible('role') %}
+            <li id="sidebar-role">
+              <a href="{{ url_for('admin.role') }}">
+                  <i class="fa fa-vcard-o"></i>&nbsp;Role
+              </a>
+            </li>
+          {% endif %}
+          {% if Resource.is_accessible('test_email') %}
+            <li id="sidebar-xcc-email">
+              <a href="{{ url_for('email.recv') }}">
+                  <i class="fa fa-list"></i>&nbsp;Email
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </li>
+      <li id="sidebar-chart">
+        <a class="has-arrow" href="#" aria-expanded="false">Chart</a>
+        <ul class="nav" aria-expanded="false">
+          {% if Resource.is_accessible('bugzilla') %}
+          <li id="sidebar-bugz"><a href="{{ url_for('chart.bugz') }}">Bugzilla</a></li>
+          {% endif %}
+          {% if Resource.is_accessible('jira') %}
+          <li id="sidebar-jira"><a href="{{ url_for('chart.jira') }}">Jira</a></li>
+          {% endif %}
+          {# <li id="sidebar-sdsperf"><a href="">SDS Perf</a></li> #}
+          {% if Resource.is_accessible('testlink') %}
+          <li id="sidebar-testlink"><a href="{{ url_for('chart.testlink') }}">Testlink</a></li>
+          {% endif %}
+          {# <li id="sidebar-testreport"><a href="">Test Report</a></li> #}
+        </ul>
+      </li>
+      {#
+      <li id="sidebar-service">
+        <a class="has-arrow" href="#" aria-expanded="false">Service</a>
+        <ul class="nav" aria-expanded="false">
+          <li id="sidebar-gerrit"><a href="">Gerrit</a></li>
+          <li id="sidebar-jenkins"><a href="">Jenkins</a></li>
+          <li id="sidebar-kibana"><a href="">Kibana</a></li>
+        </ul>
+      </li>
+      #}
+      {% if Resource.is_accessible('test_email') %}
+        <li id="sidebar-configurable">
+          <a href="{{ url_for('configurable.index') }}">
+              &nbsp;Configurable
+          </a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>

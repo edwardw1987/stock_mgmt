@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-cn" ng-app="app">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% include "styles.html" %}
+    <link rel="stylesheet" href="/static/css/bootstrap-duallistbox.css">
+    {% include "scripts.html" %}
+    {% block style %}{% endblock %}
+    <title> {{ title }} </title>
+</head>
+<body>
+  <div class="container-fluid">
+    {% include 'topmenu.html' %}
+    <div class="row">
+      {% include "sidebar.html" %}
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        {% block main %} {% endblock %}
+      </div>
+    </div>
+  </div>
+
+<script src="/static/js/clipboard.min.js"></script>
+<script src="/static/js/atf.js"></script>
+{% block script %}
+<script>
+  $(function(){
+    $("#select-resources").bootstrapDualListbox({
+      nonSelectedListLabel: 'Non-selected Resources',
+      selectedListLabel: 'Selected Resources',
+      preserveSelectionOnMove: 'moved',
+      moveOnSelect: false,
+    });
+    $('#select-roles, #select-users').select2({
+      tags: true,
+      theme: 'bootstrap'
+    });
+    // metis init pre-step for user.html etc
+    $("#menu").metisMenu({
+      activeClass: 'metis-active'
+    });
+  })
+</script>
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+atf:
+  image: hub.lenovo.com:5000/lenovo/ci_app
+  #build: .
+  container_name: ci_app
+  links:
+    - mysql:mysql
+  ports:
+    - 8080:5000
+
+mysql:
+  image: mysql:latest
+  container_name: ci_mysql
+  environment:
+    - MYSQL_ROOT_USER=root
+    - MYSQL_DATABASE=standalone
+    - MYSQL_ROOT_PASSWORD=Lenovo@mysql
+  ports:
+    - "3306:3306"
+  volumes:
+    - /srv/mysql/cloud/data:/var/lib/mysql

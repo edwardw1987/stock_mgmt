@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+{% block main %}
+  <div class="container-fluid" ng-controller="scanFlowCtrl">
+    <div class="row">
+      <div class="col-xm-12 col-sm-2 col-md-2">
+        {% if method == "flow-in" %}
+          <h3 class="title">扫码入库</h3>
+        {% else %}
+          <h3 class="title">扫码出库</h3>
+        {% endif %}
+        <div class="form-layout">
+        <form>
+            <div class="info-group">
+              <label>条形码</label>
+              <span class="toggle-info">
+                <i class="fa fa-info-circle fa-lg"></i>
+              </span>
+              <p class="alert alert-info">
+                温馨提示：<br>
+                1.鼠标点击条形码输入框<br>
+                2.用扫码抢进行扫码<br>
+                3.支持批量上传条形码
+              </p>
+            </div>
+            <input type="text" class="form-control" placeholder="扫码或输入条形码" ng-model="flow.inputBarcode" required="" ng-keyup="flow.onBarcodeInput($event, '{{method}}')" autofocus>
+        </form>
+        <button class="btn btn-primary btn-xs"
+          id="batch-upload-btn" 
+          style="margin-right: 1rem;"              
+          data-toggle="modal"
+          data-target="#upload-in-batch-modal">
+          批量上传
+          <i class="fa fa-fw fa-cloud-upload"></i>
+        </button>
+        </div>
+        {% set msgs = get_flashed_messages(False, ["error"]) %}
+        {% if msgs|length > 0 %}
+       <div class="form-layout text-danger bounceIn animated">
+          <label>非库存条形码</label>
+          <ul>
+            {% for msg in msgs %}
+              {{ msg | safe}}
+            {% endfor %}            
+          </ul>
+        </div>
+        {% endif %}
+        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="upload-in-batch-modal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title text-center">
+                  <span>批量上传</span>
+                </h4>
+            </div>
+            <div class="modal-body">
+              <form class="form-inline" ng-submit="flow.onBatchUpload()">
+                <div class="row">
+                  <div class="col-md-5 col-xm-12">
+                    <div class="alert alert-info">
+                      <p><b>批量上传条形码</b></p>
+                      <br>
+                      温馨提示：<br>
+                      1.鼠标点击条形码输入框<br>
+                      2.插上USB接收器<br>
+                      3.用扫码抢发送扫码结果<br>
+                      3.点击【确认】按钮<br>
+                    </div>
+                  </div>
+                  <div class="col-md-7 col-xm-12">                  
+                    <textarea ng-model="flow.barcodeLines" id="textarea"></textarea>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-danger">确认</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        </div> <!-- modal end -->
+        <script>
+          $(function(){
+            $("#upload-in-batch-modal").on("shown.bs.modal", function(){
+              $(this).find("#textarea").focus();
+            })
+          })
+        </script>
+      </div>
+      <div class="col-xs-12 col-md-10">
+        {% if method == "flow-in" %}
+          
+          <h3 class="title">入库明细</h3>
+        {% else %}
+          <h3 class="title">出库明细</h3>
+        {% endif %}
+        <div class="table-responsive table-layout">
+          <table class="table table-hover sortable">
+            <thead>
+              <tr ng-show="flow.show" ng-cloak>
+                <th></th>
+                <th>物料名称</th>
+                <th>条形码</th>
+                <th>成本单价(元)</th>
+                <th>历史库存</th>
+                {% if method == "flow-in" %}
+                  <th>入库数量</th>
+                  <th>入库总价(元)</th>
+                {% else %}
+                  <th>出库数量</th>
+                  <th>出库总价(元)</th>
+                {% endif %}
+                <th>历史库存总价(元)</th>
+                <th>更新时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="flow">
+              <tr ng-repeat="item in flow.flowList" ng-cloak>
+                <td>[[ $index + 1 ]]</td>
+                <td>[[ item.name ]]</td>
+                <td>[[ item.barcode]]</td>
+                <td>[[ item.unitprice | currency: "&#165;"]]</td>
+                <td>[[ item.flowed_stock_quantity? 
+                       item.flowed_stock_quantity + item.measurement_text
+                       :'无' ]]
+                </td>  
+                <td ng-if="item.flowed" 
+                {%if method == "flow-in" %}class="text-success"{% else %}class="text-danger"{% endif %}>
+                  <i style="font-size: 2rem;">
+                  {%if method == "flow-in" %}+[[ item.flowin_quantity ]]{% else %}-[[ item.flowout_quantity ]]{% endif %}
+                  </i>
+                </td>
+                <td ng-if="!item.flowed">
+                  <input class="form-control" type="number" 
+                  ng-model="item.flowQuantity" 
+                  {%if method == "flow-in" %} max="999" {% else %} max="[[ item.quantity ]]" {% endif %}
+                  min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')">
+                </td>
+                <td>[[ item.flowQuantity * item.unitprice | currency: "&#165;" ]]</td>
+                <td ng-if="item.flowed_stock_quantity">[[ item.flowed_stock_quantity * item.unitprice | currency: "&#165;" ]]</td>
+                <td ng-if="!item.flowed_stock_quantity">无</td>
+                <td>[[ item.modified ]]</td>
+                <td>[[ item.flowed? '已提交': "未提交"]]</td>
+                <td ng-if="item.flowed">无</td>
+                <td ng-if="!item.flowed">
+                  <div class="btn-group">                  
+                    <button
+                      href="#"
+                      class="btn btn-primary btn-xs"
+                      data-toggle="modal"
+                      data-target="#commit-modal-[[ item.id ]]"
+                      >{%if method == "flow-in" %}入库{% else %}出库{% endif %}
+                      <i class="fa fa-refresh"></i>
+                    </button>
+                    <button
+                      href="#"
+                      class="btn btn-danger btn-xs"
+                      data-toggle="modal"
+                      data-target="#delete-modal-[[ item.id ]]"
+                      title="delete">删除
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </div>
+                  <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="delete-modal-[[ item.id ]]">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                          <h4 class="modal-title text-center">
+                        </span>
+                        删除物料
+                        </h4>
+                      </div>
+                      <div class="modal-body">
+                        <form class="form-inline" ng-submit="flow.delete(item)">
+                          <div class="text-center">
+                            <span class="help-block">确定删除 <b class="text-danger">[[ item.name ]] x [[ item.flowQuantity ]][[ item.measurement_text ]]</b> ?</span>
+                            <span class="text-danger">条形码:[[ item.barcode ]]</span>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="btn-group">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                              <button type="submit" class="btn btn-danger">删除</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  </div> <!-- modal end -->
+                  <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="commit-modal-[[ item.id ]]">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                          <h4 class="modal-title text-center">
+                        </span>
+                        {% if method == "flow-in" %}更新入库{% else %}更新出库{% endif %}
+                        </h4>
+                      </div>
+                      <div class="modal-body">
+                        <form class="form-inline" ng-submit="flow.commit(item)">
+                          <div class="text-center">
+                            <span class="help-block">确认{% if method == "flow-in" %}入库{% else %}出库{% endif %} <b class="text-danger">[[ item.name ]] x [[ item.flowQuantity ]][[ item.measurement_text ]]</b> ?</span>
+                            <span class="text-danger">条形码:[[ item.barcode ]]</span>
+                          </div>
+                          <div class="modal-footer">
+                            <div class="btn-group">
+                              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                              <button type="submit" class="btn btn-danger">{% if method == "flow-in" %}入库{% else %}出库{% endif %}</button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  </div> <!-- modal end -->
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="hidden" id="method" name="method" value="{{ method }}">
+<script>
+$(function(){
+$("#nav-scan-{{ method }}").addClass("active").siblings().removeClass("active")
+})
+</script>
+{% endblock %}
