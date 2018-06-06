@@ -4,6 +4,8 @@
 * @Last Modified by:   wangwh8
 * @Last Modified time: 2018-06-05 10:35:32
 */
+
+/* layout */
 .submit-btn {
     position: absolute;
     right: 1rem;
@@ -13,7 +15,6 @@
 
 .form-layout{
     border: 1px solid #ccc;
-    border-radius: 1rem;
     padding: 1rem;
     padding-bottom: 5rem;
     position: relative;
@@ -21,15 +22,20 @@
     font-size: 1rem;
 }
 
+.form-layout label{
+    margin: 1rem 0;
+}
 .table-layout{
     border: 1px solid #ccc;
-    border-radius: 1rem;
     padding: 1rem;
     overflow-x: hidden;
 }
 @media screen and (max-width:768px){
  .table-layout {
     overflow-x: scroll;
+  }
+ .form-layout{
+    font-size: 1.5rem;
   }
 }
 
@@ -68,4 +74,7 @@ div.table-responsive tr > td {
     position: absolute;
     right: 0;
     bottom: 1rem;
+}
+.search{
+    margin-bottom:1rem;
 }

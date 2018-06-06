@@ -1,6 +1,87 @@
 {% extends "base.html" %}
 {% block main %}
   <div class="container-fluid" ng-controller="scanStockCtrl">
+    <div class="row inview animated fadeIn">
+
+                <!-- BEGIN: Doughnut Chart Default -->
+                <div class="col-sm-5">
+                  <div class="box">
+                    <header class="b-b">
+                      <h4>Doughnut Chart Default</h4>
+                      <!-- begin box-tools -->
+                      <div class="box-tools">
+                        <a class="fa fa-fw fa-minus" href="#" data-box="collapse"></a>
+                        <a class="fa fa-fw fa-square-o" href="#" data-fullscreen="box"></a>
+                        <a class="fa fa-fw fa-refresh" href="#" data-box="refresh"></a>
+                        <a class="fa fa-fw fa-times" href="#" data-box="close"></a>
+                      </div>
+                      <!-- END: box-tools -->
+                    </header>
+                    <div class="box-body collapse in">
+                      <div class="row">
+                        <div class="col-xs-6 col-sm-3"><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                          <h5>Chart</h5>
+                          <hr>
+                          <canvas width="31" height="31" data-charty="doughnut" data-labels="['Red', 'Blue', 'Yellow']" data-value="[100, 80, 30]" data-background-color="[&quot;#FF6384&quot;, &quot;#36A2EB&quot;, &quot;#FFCE56&quot;]" style="display: block; width: 31px; height: 31px;"></canvas>
+                        </div>
+                        <div class="col-xs-6 col-sm-9">
+                          <h5>Source</h5>
+                          <hr>
+                          <pre><code>&lt;canvas
+  width="100"
+  height="100"
+  data-charty="doughnut"
+  data-labels="['Red', 'Blue', 'Yellow']"
+  data-value="[100, 80, 30]"
+  data-background-color='["#FF6384", "#36A2EB", "#FFCE56"]'&gt;&lt;/canvas&gt;
+</code></pre>
+                        </div>
+                      </div>
+                    <div class="loader hidden"><div class="loader-inner ball-scale-ripple-multiple"><div></div><div></div><div></div></div></div></div>
+                  </div>
+                </div>
+                <!-- END: Doughnut Chart Default -->
+
+                <!-- BEGIN: Doughnut Chart with Legend -->
+                <div class="col-sm-7">
+                  <div class="box">
+                    <header class="b-b">
+                      <h4>Doughnut Chart with Legend</h4>
+                      <!-- begin box-tools -->
+                      <div class="box-tools">
+                        <a class="fa fa-fw fa-minus" href="#" data-box="collapse"></a>
+                        <a class="fa fa-fw fa-square-o" href="#" data-fullscreen="box"></a>
+                        <a class="fa fa-fw fa-refresh" href="#" data-box="refresh"></a>
+                        <a class="fa fa-fw fa-times" href="#" data-box="close"></a>
+                      </div>
+                      <!-- END: box-tools -->
+                    </header>
+                    <div class="box-body collapse in">
+                      <div class="row">
+                        <div class="col-xs-6 col-sm-4"><iframe class="chartjs-hidden-iframe" tabindex="-1" style="display: block; overflow: hidden; border: 0px; margin: 0px; top: 0px; left: 0px; bottom: 0px; right: 0px; height: 100%; width: 100%; position: absolute; pointer-events: none; z-index: -1;"></iframe>
+                          <h5>Chart</h5>
+                          <hr>
+                          <canvas width="89" height="89" data-charty="doughnut" data-labels="['Red', 'Blue', 'Yellow']" data-value="[100, 80, 30]" data-background-color="[&quot;#FF6384&quot;, &quot;#36A2EB&quot;, &quot;#FFCE56&quot;]" data-legend="true" style="display: block; width: 89px; height: 89px;"></canvas>
+                        </div>
+                        <div class="col-xs-6 col-sm-8">
+                          <h5>Source</h5>
+                          <hr>
+                          <pre><code>&lt;canvas
+  width="100"
+  height="100"
+  data-charty="doughnut"
+  data-labels="['Red', 'Blue', 'Yellow']"
+  data-value="[100, 80, 30]"
+  data-background-color='["#FF6384", "#36A2EB", "#FFCE56"]'
+  data-legend=true&gt;&lt;/canvas&gt;
+</code></pre>
+                        </div>
+                      </div>
+                    <div class="loader hidden"><div class="loader-inner ball-scale-ripple-multiple"><div></div><div></div><div></div></div></div></div>
+                  </div>
+                </div>
+                <!-- END: Doughnut Chart with Legend -->
+              </div>
     <div class="row">
       <div class="col-sm-12 col-md-3">
         <h3 class="title">新建库存</h3>
@@ -13,7 +94,7 @@
               <span class="toggle-info">
                 <i class="fa fa-info-circle fa-lg"></i>
               </span>
-              <p class="alert alert-info" style="display: none;">
+              <p class="alert alert-info flipInX animated" style="display: none;">
                 温馨提示：<br>
                 1.鼠标点击条形码输入框<br>
                 2.用扫码抢进行扫码
@@ -46,7 +127,7 @@
             <h3 class="title">库存明细</h3>
           </div>
           <div class="col-md-3 col-md-offset-7">
-            <div class="input-group">
+            <div class="input-group search">
                <input type="text" class="form-control" placeholder="物料名称 | 条形码">
                <span class="input-group-btn">
                  <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>

@@ -1,0 +1,15 @@
+/*
+* @Author: wangwh8
+* @Date:   2018-05-24 12:46:46
+* @Last Modified by:   wangwh8
+* @Last Modified time: 2018-06-05 10:35:32
+*/
+
+/* reset*/
+.form-control{
+    border-radius: 0;
+    box-shadow: none !important;
+}
+.alert, .btn, .modal-content{
+    border-radius: 0;
+}
