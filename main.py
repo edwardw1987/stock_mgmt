@@ -16,7 +16,6 @@ def make_app(debug=False, **kwargs):
     app = Flask(__name__)
     app.config.from_pyfile('config.py')
     # app.debug = not app.config['PRODUCTION']
-    app.secret_key = "19da6a22-9992-45e5-b6e9-b2ff3d883014"
     app.debug = True
     app.jinja_env.auto_reload = app.debug
     app.jinja_env.globals.update(**kwargs)

@@ -69,60 +69,69 @@
        100% {transform: scale(1);}
      }/*End of Zoom out Keyframes */
     
-    #form-layout{
-        margin-top: 30%;
-        color: #fff;
-        transition: all .5s ease-in-out;
-        overflow-y: hidden;
-        box-shadow: 0 0 10px #fff;
-    }
     #form-layout .wrapper{
-        padding: .5rem 7rem 3rem;
+        padding: .5rem 2rem 3rem;
     }
     #form-layout .form-control{
         margin-bottom: 1.5rem;
         /*background: transparent;*/
     }
-    #form-layout .title{
-        padding: 2rem;
-        border-bottom: 1px solid #fff;
+    #banner{
+      background: transparent;
+      height: 50%; 
+      position: absolute;
+      top: 50%; 
+      width: 100%;
+      transform: translate3d(0, -50%, 0);
+    }
+    #form-layout .form-control{
+      font-size: 1.8rem;
     }
     </style>
 </head>
 <body>
 
-    <div class="zoominheader">
-    </div>
-        <div class="row">
-            <div class="col-md-4 col-md-offset-7 col-xm-12">
-            <div id="form-layout">
-                <h3 class="title">登录库存管理系统v0.1</h2>
-                <div class="wrapper">                
-                    <form method="post" action="{{ url_for('auth.login', next=next)}}">
-                        <label for="username" class="sr-only">用户名</label>
-                        <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required="" 
-                        {% if not request.args.account %}
-                        autofocus="" 
-                        {% endif %}
-                        autocomplete="off" value="{{ request.args.account }}">
-                        <label for="password" class="sr-only">密码</label>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="密码" required="" autofocus>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" value="remember-me">记住我
-                            </label>
-                        </div>
-                        {% for msg in get_flashed_messages(False, ["error"]) %}
-                          <div class="alert alert-danger bounceIn animated">{{msg}}</div>
-                        {% endfor %}
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
-                    </form>
-                </div>
-            </div>
+<div class="zoominheader">
+</div>
+<div id="banner">
+  <div class="container">
+    <div class="row">      
+      <div class="col-xs-12 col-md-4 col-md-offset-8">
+        <h3>登录库存管理系统</h3>
+        <hr>
+        <div id="form-layout">
+          <div class="wrapper">            
+            <form method="post" action="{{ url_for('auth.login', next=next)}}">
+              <label for="username" class="sr-only">用户名</label>
+              <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required=""
+              {% if not request.args.account %}
+                autofocus=""
+              {% endif %}
+              autocomplete="off" value="{{ request.args.account }}">
+              <label for="password" class="sr-only">密码</label>
+              <input type="password" id="password" name="password" class="form-control" placeholder="密码" required="" autofocus>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" value="remember-me">记住我
+                </label>
+              </div>
+              {% for msg in get_flashed_messages(False, ["error"]) %}
+                <div class="alert alert-danger bounceIn animated">{{msg}}</div>
+              {% endfor %}
+              <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4 col-md-offset-7 col-xm-12">
+  </div>
+</div>
     <footer style="position: fixed;bottom: 0;left: 0; text-align: center; width: 100%; background: #000; opacity: .4; padding-top: 1rem;">        
-        <p>2018-2019 All Right Reserved.</p>
+        <p>Copyright 2018-2019 All Right Reserved.</p>
     </footer>
 </body>
 </html>
