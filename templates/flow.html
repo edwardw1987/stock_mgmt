@@ -3,8 +3,8 @@
   <div class="container-fluid" ng-controller="scanFlowCtrl">
     <div class="row">
       <div class="col-sm-12 col-md-3">
-      <div class="panel panel-info">
-        <div class="panel-heading">
+        <div class="panel panel-info">
+          <div class="panel-heading">
         {% if method == "flow-in" %}
           <h3 class="title">扫码入库</h3>
         {% else %}
@@ -36,19 +36,23 @@
             <i class="fa fa-fw fa-cloud-upload"></i>
           </button>
           </div>
-          {% set msgs = get_flashed_messages(False, ["error"]) %}
-          {% if msgs|length > 0 %}
-       <  div class="form-layout text-danger bounceIn animated">
+        </div>
+      </div>
+        {% set msgs = get_flashed_messages(False, ["error"]) %}
+        {% if msgs|length > 0 %}
+        <div class="panel panel-danger shake animated">
+          <div class="panel-heading">
             <label>非库存条形码</label>
-            <ul>
+          </div>
+          <div class="panel-body">
+            <ul class="text-danger">
               {% for msg in msgs %}
                 {{ msg | safe}}
               {% endfor %}            
             </ul>
           </div>
-          {% endif %}
         </div>
-      </div>
+        {% endif %}
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="upload-in-batch-modal">
           <div class="modal-dialog">
             <div class="modal-content">
