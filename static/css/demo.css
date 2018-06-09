@@ -2,7 +2,7 @@
 * @Author: wangwh8
 * @Date:   2018-05-24 12:46:46
 * @Last Modified by:   edward
-* @Last Modified time: 2018-06-07 22:31:16
+* @Last Modified time: 2018-06-09 21:18:47
 */
 /* layout */
 .submit-btn {
@@ -23,10 +23,10 @@
     margin: 5px 0;
 }
 .table-layout{
-    border: 1px solid #ccc;
-    padding: 1rem;
+    /*border: 1px solid #ccc;*/
     overflow-x: hidden;
 }
+
 @media screen and (max-width:768px){
  .table-layout {
     overflow-x: scroll;
@@ -61,6 +61,7 @@ div.table-responsive tr > td {
 
 .title{
     margin: 0;
+    padding-bottom: 8px;
 }
 
 #textarea{
@@ -77,3 +78,21 @@ div.table-responsive tr > td {
     font-size: 1.6rem;
 }
 
+/* start 'enter' transition on main view */
+.ng-enter {
+    /* transition on enter for .5s */
+    transition: .5s;
+
+    /* start with opacity 0 (invisible) */
+    opacity: 0;
+}
+
+/* end 'enter' transition on main view */
+.ng-enter-active {
+    /* end with opacity 1 (fade in) */
+    opacity: 1;
+}
+
+td.quantity i{
+    font-size: 2rem;
+} 

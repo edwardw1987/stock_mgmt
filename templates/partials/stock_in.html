@@ -1,0 +1,55 @@
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-md-5">
+        <h3 class="title">入库详情: [[ stock.name ]] - [[ stock.barcode ]]</h3>
+      </div>
+      <div class="col-md-2 col-md-offset-5">
+        <a ui-sref="stockList" class="btn btn-default pull-right">
+          &lt;&lt;&nbsp;库存列表
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-hover sortable table-layout">
+        <thead>
+          <tr ng-cloak>
+            <th></th>
+            <th>物料名称</th>
+            <th>条形码</th>
+            <th>单价</th>
+            <th>数量</th>
+            <th>总价(元)</th>
+            <th>历史库存</th>
+            <th>历史库存总价(元)</th>
+            <th>更新时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-if="flowList.length == 0">
+            <td> 暂无详情 </td>
+          </tr> 
+          <tr ng-repeat="item in flowList" ng-cloak>
+            <td>[[ $index + 1 ]]</td>
+            <td>[[ item.name  ]]</td>
+            <td>[[ item.barcode ]]</td>
+            <td>[[ item.unitprice | currency: "&#165;&nbsp;" ]]</td>
+            <td ng-show="item.flowin_quantity > 0" class="text-success quantity">
+              <i>+[[ item.flowin_quantity ]]</i></td>
+            <td ng-show="item.flowin_quantity > 0">
+            [[ item.unitprice * item.flowin_quantity | currency: "&#165;&nbsp;" ]]</td>
+            <td ng-show="item.flowout_quantity > 0" class="text-danger quantity">
+              <i>-[[ item.flowout_quantity ]]</i></td>
+            <td ng-show="item.flowout_quantity > 0">
+            [[ item.unitprice * item.flowout_quantity | currency: "&#165;&nbsp;" ]]</td>
+            <td>[[ item.flowed_stock_quantity + item.measurement_text]]</td>
+            <td>[[ item.unitprice * item.flowed_stock_quantity | currency: "&#165;&nbsp;" ]]</td>
+            <td>[[ item.modified ]]</td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</div>

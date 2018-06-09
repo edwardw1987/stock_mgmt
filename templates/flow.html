@@ -102,15 +102,25 @@
       <div class="col-xs-12 col-md-9">
         <div class="panel panel-info">
           <div class="panel-heading">
-            {% if method == "flow-in" %}
-              <h3 class="title">入库明细</h3>
-            {% else %}
-              <h3 class="title">出库明细</h3>
-            {% endif %}
+            <div class="row">
+              <div class="col-md-2">
+              {% if method == "flow-in" %}
+                <h3 class="title">入库明细</h3>
+              {% else %}
+                <h3 class="title">出库明细</h3>
+              {% endif %}
+              </div>
+              <div class="col-md-3 col-md-offset-7">
+                <div class="input-group search">
+                   <input ng-model="stock.searchText" ng-change="stock.onSearchTextChange()" type="text" class="form-control" placeholder="物料名称 | 条形码">
+                 </div><!-- /input-group -->                
+              </div>
+            </div>
+
           </div>
           <div class="panel-body">
             <div class="table-responsive">
-              <table class="table table-hover sortable">
+              <table class="table table-hover table-layout">
                 <thead>
                   <tr ng-show="flow.show" ng-cloak>
                     <th></th>
@@ -125,14 +135,13 @@
                       <th>出库数量</th>
                       <th>出库总价(元)</th>
                     {% endif %}
-                    <th>历史库存总价(元)</th>
                     <th>更新时间</th>
                     <th>状态</th>
                     <th>操作</th>
                   </tr>
                 </thead>
                 <tbody id="flow">
-                  <tr ng-repeat="item in flow.flowList" ng-cloak>
+                  <tr ng-repeat="item in flow.flowList" ng-cloak ng-init="isflowin = item.flowQuantity == item.flowin_quantity">
                     <td>[[ $index + 1 ]]</td>
                     <td>[[ item.name ]]</td>
                     <td>[[ item.barcode]]</td>
@@ -141,10 +150,10 @@
                            item.flowed_stock_quantity + item.measurement_text
                            :'无' ]]
                     </td>  
-                    <td ng-if="item.flowed" 
-                    {%if method == "flow-in" %}class="text-success"{% else %}class="text-danger"{% endif %}>
-                      <i style="font-size: 2rem;">
-                      {%if method == "flow-in" %}+[[ item.flowin_quantity ]]{% else %}-[[ item.flowout_quantity ]]{% endif %}
+                    <td ng-if="item.flowed" class="quantity" 
+                    ng-class="{true: 'text-success', false: 'text-danger'}[isflowin]" ng-init="expression">
+                      <i>
+                      [[ {true: '+' + item.flowin_quantity, false: '-' + item.flowout_quantity}[isflowin] ]]
                       </i>
                     </td>
                     <td ng-if="!item.flowed">
@@ -154,30 +163,24 @@
                       min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')">
                     </td>
                     <td>[[ item.flowQuantity * item.unitprice | currency: "&#165;" ]]</td>
-                    <td ng-if="item.flowed_stock_quantity">[[ item.flowed_stock_quantity * item.unitprice | currency: "&#165;" ]]</td>
-                    <td ng-if="!item.flowed_stock_quantity">无</td>
                     <td>[[ item.modified ]]</td>
                     <td>[[ item.flowed? '已提交': "未提交"]]</td>
                     <td ng-if="item.flowed">无</td>
                     <td ng-if="!item.flowed">
-                      <div class="btn-group">                  
                         <button
                           href="#"
-                          class="btn btn-primary btn-xs"
+                          class="btn btn-primary"
                           data-toggle="modal"
                           data-target="#commit-modal-[[ item.id ]]"
                           >{%if method == "flow-in" %}入库{% else %}出库{% endif %}
-                          <i class="fa fa-refresh"></i>
                         </button>
                         <button
                           href="#"
-                          class="btn btn-danger btn-xs"
+                          class="btn btn-danger"
                           data-toggle="modal"
                           data-target="#delete-modal-[[ item.id ]]"
                           title="delete">删除
-                          <i class="fa fa-trash"></i>
                         </button>
-                      </div>
                       <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="delete-modal-[[ item.id ]]">
                         <div class="modal-dialog modal-sm">
                           <div class="modal-content">

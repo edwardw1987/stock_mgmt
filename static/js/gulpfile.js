@@ -4,6 +4,9 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var babel = require('gulp-babel');
 var bundles = [
+    "angular.min.js",
+    "angular-ui-router.js",
+    "angular-animate.min.js",
     "src/*.js"
 ];
 gulp.task('default', ['watch'], function(){

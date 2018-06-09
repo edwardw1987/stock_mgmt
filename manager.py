@@ -42,8 +42,9 @@ def build_users():
     db.session.commit()
     # ------------------------
     root = User(email="root@standalone.com",
-                first_name="root", last_name="root",
+                account=config.ROOT_USER, 
                 roles=[super_user_role],
+                password=config.ROOT_PASSWD,
                 active=True,
                 )
     db.session.add(root)

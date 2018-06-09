@@ -28,41 +28,6 @@ def access_required(resource_name, call_back=None):
     return decorator
 
 
-class AlchemyEncoder(json.JSONEncoder):
-    _visited_objs = []
-
-    def default(self, obj):
-        if isinstance(obj.__class__, DeclarativeMeta):
-            # don't re-visit self
-            if obj in self._visited_objs:
-                return None
-            self._visited_objs.append(obj)
-
-            # an SQLAlchemy class
-            fields = {}
-            for field in [x for x in dir(obj) if not x.startswith('_') and x != 'metadata']:
-                data = obj.__getattribute__(field)
-                try:
-                    if isinstance(data, datetime):
-                        data = data.strftime('%Y-%m-%d %H:%M:%S')
-                    # this will fail on non-encodable values, like other classes
-                    json.dumps(data)
-                    fields[field] = data
-                except TypeError:
-                    fields[field] = None
-            return fields
-
-        return json.JSONEncoder.default(self, obj)
-
-
-def to_dict(data):
-    jsonstr = json.dumps(data, cls=AlchemyEncoder,
-                         check_circular=False, skipkeys=True)
-    ret = json.loads(jsonstr)
-    return ret
-
-
-
 class ContextExtension(object):
     def __init__(self, app):
         self.app = app
@@ -109,38 +74,6 @@ def get_subelements(ele, tagname, only_one=True):
                 return sub
             ret.append(sub)
     return ret
-
-
-def parse_output(filepath):
-    tree = ET.parse(filepath)
-    root = tree.getroot()
-    statistics = get_subelements(root, 'statistics')
-    total = get_subelements(statistics, 'total')
-    all_tests_stat = get_subelements(total, 'stat', only_one=False)[-1]
-    return all_tests_stat.attrib
-
-def parse_redfish_output(filepath):
-    with open(filepath) as inf:
-        html = BeautifulSoup(inf.read(), 'html.parser')
-        targetinput = html.find(attrs={"name": "parsed-results"})
-        if targetinput is None:
-            return
-        value = targetinput.get('value')
-        return json.loads(value)
-
-def parse_uefi_validation_index(filepath):
-    ret = {}
-    with open(filepath) as inf:
-        html = BeautifulSoup(inf.read())
-        el_a = html.find_all(attrs={'class': 'list-group-item'})
-        for a in el_a:
-            a_id = a.get('id')
-            if a_id and a_id.startswith('index'):
-                if a.text.endswith('failed'):
-		    ret['fail'] = ret.get('fail', 0) + 1
-                elif a.text.endswith('successful'):
-		    ret['success'] = ret.get('success', 0) + 1
-        return ret
 
 def excludes(keys=(), values=()):
     def _decorator(f):

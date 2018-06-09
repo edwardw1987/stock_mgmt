@@ -10,6 +10,7 @@ from sqlalchemy import not_
 from sqlalchemy.orm import sessionmaker
 import config
 from database import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Define models
 roles_users = db.Table(
@@ -80,10 +81,11 @@ class Role(db.Model, RoleMixin):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
+    account = db.Column(db.String(255))
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
     email = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(255))
+    hash_password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
     roles = db.relationship('Role', secondary=roles_users,
@@ -125,6 +127,16 @@ class User(db.Model, UserMixin):
         user.roles = roles
         db.session.commit()
 
+    @property  
+    def password(self):  
+        raise AttributeError('password cannot be read');  
+ 
+    @password.setter  
+    def password(self,password):  
+        self.hash_password=generate_password_hash(password)  
+  
+    def confirm_password(self,password):  
+        return check_password_hash(self.hash_password,password)  
 
 class Resource(db.Model):
     id = db.Column(db.Integer, primary_key=True)

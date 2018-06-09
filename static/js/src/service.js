@@ -77,12 +77,10 @@ angular.module('rest', [])
             }
         })
     }
-    this.listFlow = function(method){
+    this.listFlow = function(data){
         return $http({
             url: "/api/flow/",
-            params:{
-                method: method
-            }
+            params: data
         })
     }
 }])

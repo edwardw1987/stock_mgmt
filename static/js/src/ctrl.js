@@ -1,71 +1,13 @@
 /*
  * @Author: wangwh8
  * @Date:   2017-06-27 14:27:06
- * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-04 17:19:17
+ * @Last Modified by:   edward
+ * @Last Modified time: 2018-06-09 20:13:11
  */
 
 'use strict';
 
 angular.module('ctrl', [])
-    .controller('scanStockCtrl', ['$scope', "scan", function($scope, scan){
-        $scope.stock = {
-            duplicate: [],
-            animate: false,
-            show: false,
-            data:{},
-            stockList: [],
-            mOptions: {},
-            isDuplicate: function(){
-                this.animate = false;
-                return scan.getStockByBarcode(this.data.barcode).then(function(resp){
-                    console.log(resp.data)
-                    if (resp.data.success){
-                        this.duplicate.push(this.data.barcode)
-                        return true
-                    }else{
-                        this.duplicate = [];
-                        return false
-                    }
-                }.bind(this))
-            },
-            save: function(){
-                this.isDuplicate().then((isdup)=>{
-                    if (isdup) {
-                        this.animate = true;
-                        return;
-                    }
-                    scan.newStock(this.data).then(function(resp){
-                        if (resp.data.success){
-                            window.location.reload();
-                        }else{
-                            alert("error on create")
-                        }
-                    })
-                })
-            },
-            delete: function(item){
-                scan.delStock(item.id).then(function(resp){
-                    if (resp.data.success){
-                        window.location.reload();
-                    }else{
-                        alert("error on delete")
-                    }
-                })
-                return false;
-            },
-            initStockList(){
-                scan.listStock().then((resp) => {
-                    this.stockList = resp.data.stockList;
-                    this.show = true;
-                })
-                scan.mOptions().then((resp) => {
-                    this.mOptions = resp.data;
-                })
-            }
-        };
-        $scope.stock.initStockList();
-    }])
     .controller('scanFlowCtrl', ['$scope', "$timeout", "scan", function($scope, $timeout, scan){
         let method = angular.element('#method').val();
         $scope.flow = {
@@ -98,7 +40,7 @@ angular.module('ctrl', [])
                 })
             },
             initFlowList(method){
-                scan.listFlow(method).then((resp) => {
+                scan.listFlow({method: method}).then((resp) => {
                     this.flowList = resp.data.flowList;
                     this.show = true;
                 })

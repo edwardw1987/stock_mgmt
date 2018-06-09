@@ -52,12 +52,13 @@ class LDAP(object):
 
 class DatabaseAuth(object):
     def login(self, account, pwd):
-        if account != config.ROOT_USER:
+
+        user = User.query.filter_by(account=account).first()
+        if not user:
             return -1
-        if pwd != config.ROOT_PASSWD:
+        if not user.confirm_password(pwd):
             return -1
-        root_user = User.query.get(1)
-        login_user(root_user)
+        login_user(user)
         session_update({
             'displayName': account
         })
