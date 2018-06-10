@@ -19,7 +19,7 @@ def make_app(debug=False, **kwargs):
     app.debug = True
     app.jinja_env.auto_reload = app.debug
     app.jinja_env.globals.update(**kwargs)
-    app.permanent_session_lifetime = 5 * 60   # session live for seconds
+    app.permanent_session_lifetime = 10 * 60   # session live for seconds
     db = init_db()
     db.init_app(app)
     # models.init_app(app)

@@ -109,7 +109,11 @@
               {% endif %}
               autocomplete="off" value="{{ request.args.account }}">
               <label for="password" class="sr-only">密码</label>
-              <input type="password" id="password" name="password" class="form-control" placeholder="密码" required="" autofocus autocomplete="">
+              <input type="password" id="password" name="password" class="form-control" placeholder="密码" required="" 
+              {% if request.args.account %}
+                   autofocus=""
+               {% endif %} 
+              autocomplete="">
               <div class="checkbox">
                 <label>
                   <input type="checkbox" value="remember-me">记住我

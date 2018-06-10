@@ -11,7 +11,7 @@ app = Blueprint('scan', __name__, template_folder='templates')
 @app.route('/')
 @login_required
 def home(): 
-    return render_template("stock.html", next=url_for(".home"))
+    return render_template("index.html", next=url_for(".home"))
 
 class FlowMixin(object):
 
@@ -60,25 +60,6 @@ class FlowMixin(object):
             Stock, Stock.id == Flow.stock_id).filter(*filters).first()
 
 
-class FlowIn(MethodView, FlowMixin):
-    decorators = [login_required]
-
-    def get(self):
-        method="flow-in"
-        # flows = self.query_flow(method)
-        return render_template("flow.html", method=method, next=url_for(".flow_in"))
-
-@app.route("/flow-out/")
-@login_required
-def flow_out():
-    return render_template("flow.html", method="flow-out", next=url_for(".flow_out"))
-
-@app.route("/stocktake")
-@login_required
-def stocktake():
-    return render_template("stocktake.html", next=url_for(".stocktake"))
-
-
 @app.route("/stock/input", methods=["POST"])
 def stock_input():
     jd = request.get_json()
@@ -95,6 +76,7 @@ class ApiFlow(MethodView, FlowMixin):
         method = util.args_get("method")
         stockid = util.args_get("stockid")
         stock = None
+        flows = [] 
         if method:
             flows = self.query_flow_by_method(method)
         elif stockid:
@@ -193,7 +175,8 @@ class ApiFlowBatch(MethodView, FlowMixin):
             else:
                 f = Flow.create(createInfo)
             ret["success"] += count
-        flash("".join("<li>%s</li>" % i for i in ret["failedBarcodes"]), category="error")
+        if ret["failedBarcodes"]:
+            flash("".join("<li>%s</li>" % i for i in ret["failedBarcodes"]), category="error")
         return jsonify(ret)
 
 class ApiStock(MethodView):
@@ -266,4 +249,3 @@ app.add_url_rule("/api/stock/<int:stock_id>", view_func=ApiStock.as_view("api.st
 app.add_url_rule("/api/stock/", view_func=ApiStock.as_view("api.stock"))
 app.add_url_rule("/api/flow/", view_func=ApiFlow.as_view("api.flow"))
 app.add_url_rule("/api/flow/batch", view_func=ApiFlowBatch.as_view("api.flow.batch"))
-app.add_url_rule("/flow-in/", view_func=FlowIn.as_view("flow_in"))

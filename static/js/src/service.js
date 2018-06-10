@@ -29,6 +29,12 @@ angular.module('rest', [])
             url: "/api/stock"
         })
     }
+    this.getStock = function(id){
+        return $http({
+            url: "/api/stock/" + id
+        })
+
+    }
     this.getStockByBarcode = function(barocde){
         return $http({
             url: "/api/stock/",

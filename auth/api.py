@@ -43,7 +43,7 @@ class BaseLoginView(MethodView):
     def get_auth(self):
         acc = util.form_get(self.account_field)
         pwd = util.form_get(self.password_field)
-        return (acc, pwd)
+        return (str(acc), str(pwd))
 
     def render(self, template, **kwargs):
         try:
