@@ -5,4 +5,11 @@
       <div ui-view></div>
     </div>
   </div>
+  <script>
+      $(function(){
+          $("body").on("click", ".toggle-info", function(){
+              $(this).parent().children(".alert").slideToggle();
+          })
+      })
+  </script>
 {% endblock %}

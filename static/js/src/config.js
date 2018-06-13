@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   edward
- * @Last Modified time: 2018-06-13 23:27:35
+ * @Last Modified time: 2018-06-13 23:46:57
  */
 
 'use strict';
@@ -39,6 +39,9 @@ angular.module('config', [])
                 $scope.flowList = resp.data.flowList;
                 $scope.stock = resp.data.stock;
             })
+            $scope.goBack = ()=>{
+                window.history.back();
+            }
         }]
     }
     var stockInState = {

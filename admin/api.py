@@ -1,6 +1,7 @@
 from flask import (render_template, url_for, redirect, Blueprint, request, abort)
+from flask import jsonify
 from flask.views import MethodView
-from flask_login import login_required
+from flask_login import login_required, current_user
 from util import access_required
 from models import User, Role, Resource
 import util
@@ -76,5 +77,24 @@ class RoleView(MethodView):
         return redirect(url_for('.role'))
 
 
+class UserPassword(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        op = util.form_get("opasswd", required=True)
+        np = uitl.form_get("npasswd", required=True)
+        cp = uitl.form_get("cpasswd", required=True)
+        if not current_user.confirm_password(op):
+            ret = {"success": False, "error": 1}
+        elif np != cp:
+            ret = {"success": False, "error": 2}
+        elif not (8 <= len(np) <= 16):
+            ret = {"success": False, "error": 3}
+        else:
+            current_user.update_password(np)
+            ret = {"success": True}
+        return jsonify(ret)
+
 app.add_url_rule('/user', view_func=UserView.as_view("user"))
+app.add_url_rule('/user/password', view_func=UserPassword.as_view("user.password"))
 app.add_url_rule('/role', view_func=RoleView.as_view("role"))

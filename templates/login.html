@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/css/bootstrap.min.css">
     <link rel="stylesheet" href="/static/css/animate.css">
     <link rel="stylesheet" href="/static/css/reset.css">
+    <link rel="stylesheet" href="/static/css/font-awesome.min.css">
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <style>
@@ -73,7 +74,7 @@
         padding: .5rem 2rem 3rem;
     }
     #form-layout .form-control{
-        margin-bottom: 1.5rem;
+        /*margin-bottom: 1.5rem;*/
         /*background: transparent;*/
     }
     #banner{
@@ -84,9 +85,12 @@
       width: 100%;
       transform: translate3d(0, -50%, 0);
     }
-    #form-layout .form-control{
-      font-size: 1.8rem;
+    .margin-bottom-sm{
+      margin-bottom: 1rem;
     }
+/*    #form-layout .form-control{
+      font-size: 1.8rem;
+    }*/
     </style>
 </head>
 <body>
@@ -97,23 +101,19 @@
   <div class="container">
     <div class="row">      
       <div class="col-xs-12 col-md-4 col-md-offset-8">
-        <h3>登录库存管理系统</h3>
+        <h3><i class="fa fa-fw fa-truck"></i>登录库存管理系统</h3>
         <hr>
         <div id="form-layout">
           <div class="wrapper">            
             <form method="post" action="{{ url_for('auth.login', next=next)}}">
-              <label for="username" class="sr-only">用户名</label>
-              <input type="text" id="username" name="username" class="form-control" placeholder="用户名" required=""
-              {% if not request.args.account %}
-                autofocus=""
-              {% endif %}
-              autocomplete="off" value="{{ request.args.account }}">
-              <label for="password" class="sr-only">密码</label>
-              <input type="password" id="password" name="password" class="form-control" placeholder="密码" required="" 
-              {% if request.args.account %}
-                   autofocus=""
-               {% endif %} 
-              autocomplete="">
+              <div class="input-group margin-bottom-sm">
+                <span class="input-group-addon"><i class="fa fa-user-o fa-fw"></i></span>
+                <input class="form-control" name="username" id="username" type="text" placeholder="用户名" autocomplete="off" required="required">
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+                <input class="form-control" name="password" id="password" type="password" placeholder="密码" required="required">
+              </div>             
               <div class="checkbox">
                 <label>
                   <input type="checkbox" value="remember-me">记住我
@@ -132,10 +132,23 @@
 </div>
 <div class="row">
   <div class="col-md-4 col-md-offset-7 col-xm-12">
+
   </div>
 </div>
     <footer style="position: fixed;bottom: 0;left: 0; text-align: center; width: 100%; background: #000; opacity: .4; padding-top: 1rem;">        
         <p>Copyright 2018-2019 All Right Reserved.</p>
     </footer>
+    <script>
+      $(function(){
+        var account = "{{ request.args.account }}";
+        if (account.trim().length > 0){
+          $("#username").val(account);
+          $("#password").focus();
+        }else{
+          $("#username").focus();
+        }
+
+      })
+    </script>
 </body>
 </html>
