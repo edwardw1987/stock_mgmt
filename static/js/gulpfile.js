@@ -1,25 +1,22 @@
-// cnpm install gulp gulp-concat gulp-uglify gulp-babel babel-core babel-preset-es2015
+// cnpm install gulp gulp-concat gulp-uglify gulp-babel babel-core babel-preset-env
 var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var babel = require('gulp-babel');
-var bundles = [
-    "angular.min.js",
-    "angular-ui-router.js",
-    "angular-animate.min.js",
-    "src/*.js"
-];
+var webpack = require('webpack-stream');
 gulp.task('default', ['watch'], function(){
   console.log('start...');
 });
 gulp.task('babel', function(){
-  return gulp.src(bundles)
+  return gulp.src("./src/*.js")
+    .pipe(webpack(require("./webpack.config.js")))
     .pipe(babel({
-        presets: ['es2015']
+        presets: ['env'],
+        plugins: ["angularjs-annotate"]
     }))
     // .pipe(gulp.dest(__dirname))
     .pipe(uglify())
-    .pipe(concat('bundle.min.js'))
+    // .pipe(concat('bundle.min.js'))
     .pipe(gulp.dest(__dirname));
 });
 

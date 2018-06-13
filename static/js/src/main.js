@@ -1,15 +1,17 @@
-/*
- * @Author: wangwh8
- * @Date:   2017-06-27 14:25:51
- * @Last Modified by:   edward
- * @Last Modified time: 2018-06-10 11:02:10
- */
+import angular from 'angular';
+import ngAnimate from "angular-animate";
+import filter from "./filter"
+import ctrl from "./ctrl"
+import config from "./config"
+import service from "./service"
+import uiRouter from 'angular-ui-router';
 
-'use strict';
 
 angular.module('app', [
-    "ngAnimate",
-    'rest',
-    'config',
-    'filter'
+    ngAnimate,
+    uiRouter,
+    filter,
+    ctrl,
+    config,
+    service,
 ])

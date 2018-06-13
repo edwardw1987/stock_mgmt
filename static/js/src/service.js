@@ -1,10 +1,6 @@
-/**
-* api.bugz Module
-*
-* Description
-*/
+export default 
 angular.module('rest', [])
-.service('scan', ['$http', function($http){
+.service('scan', function($http){
     this.mOptions = function(){
         return $http({
             url: '/m/options'
@@ -89,4 +85,4 @@ angular.module('rest', [])
             params: data
         })
     }
-}])
+}).name;
