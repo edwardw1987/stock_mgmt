@@ -269,9 +269,8 @@ function($scope, $timeout, admin){
             opasswd: self.opasswd,
             npasswd: self.npasswd,
             cpasswd: self.cpasswd
-        }).then(() => {
-            self.log = null;
         }).then((resp) => {
+            self.log = null;
             if (resp.data.success){
                 self.log = {text: '密码修改成功', level: 'info'}
             }else{
