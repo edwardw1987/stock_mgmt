@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-14 11:55:44
+ * @Last Modified time: 2018-06-14 14:10:36
  */
 
 'use strict';
@@ -17,7 +17,7 @@ angular.module('config', [])
     // $locationProvider.html5Mode(true)
     // For any unmatched url, redirect to /state1
     $urlRouterProvider.otherwise("/stock");
-    // $urlRouterProvider.when("/box/add", "/box/add/bugz");
+    $urlRouterProvider.when("/settings", "/settings/change-password");
     //
     // Now set up the states
 
@@ -41,6 +41,19 @@ angular.module('config', [])
         name: 'flowOut',
         url: '/flow-out',
         template: '<flowout-list></flowout-list>',
+    })
+    .state({
+        name: 'settings',
+        url: '/settings',
+        template: '<settings-nav></settings-nav>',
+        // onEnter: ["$state", function($state){
+        //     $state.go("settings.changepassword");   
+        // }]
+    })
+    .state({
+        url: "/change-password",
+        name: 'settings.changepassword',
+        template: "<changepasswordform></changepasswordform>"
     })
     var stockInState = {
         name:'stockIn',

@@ -25,9 +25,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-if="flowList.length == 0">
-            <td> 暂无数据 </td>
-          </tr> 
+          <tr ng-if="flowList.length == 0" ng-cloak> <td>暂无数据</td> </tr>
           <tr ng-repeat="item in flowList" ng-cloak>
             <td>[[ $index + 1 ]]</td>
             <td>[[ item.name  ]]</td>

@@ -246,4 +246,7 @@ angular.module('ctrl', [])
         window.history.back();
     }
 })
+.controller('changepasswordCtrl', function($scope){
+    console.log("changing....")
+})
 .name;
