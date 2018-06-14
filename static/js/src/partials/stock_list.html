@@ -29,7 +29,6 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-show="stock.show && stock.stockList.length == 0" ng-cloak> <td>暂无数据</td> </tr>
             <tr ng-repeat="item in stock.stockList" ng-cloak>
               <td>[[ $index + 1 ]]</td>
               <th><input type="checkbox" ng-checked="item.checked" 
@@ -88,6 +87,7 @@
             </tr>
         </tbody>
       </table>
+      <p ng-show="stock.show && stock.stockList.length == 0" ng-cloak> 暂无数据 </p>
       <div class="pull-right">
       </div>
     </div>
