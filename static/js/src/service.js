@@ -85,4 +85,14 @@ angular.module('rest', [])
             params: data
         })
     }
-}).name;
+})
+.service('admin', function($http){
+    this.updateUserPassword = (data) => {
+        return $http({
+            url: "/admin/user/password",
+            data: data,
+            method: "POST",
+        })
+    }
+})
+.name;

@@ -246,7 +246,42 @@ angular.module('ctrl', [])
         window.history.back();
     }
 })
-.controller('changepasswordCtrl', function($scope){
-    console.log("changing....")
+.controller('changepasswordCtrl', 
+function($scope, $timeout, admin){
+    let self = $scope;
+    self.opasswd = ''
+    self.npasswd = ''
+    self.cpasswd = ''
+    self.log = null
+    self.identifyPassword = function(){
+        if (self.cpasswd && self.npasswd){
+            if (self.cpasswd === self.npasswd){
+                self.log = null;
+            }else{
+                if (self.log === null) {
+                    self.log = {text: "新密码与确认密码不一致", level: 'error'};
+                }
+            }
+        }
+    }
+    self.onSubmitPasswordForm = function(){
+        admin.updateUserPassword({
+            opasswd: self.opasswd,
+            npasswd: self.npasswd,
+            cpasswd: self.cpasswd
+        }).then(() => {
+            self.log = null;
+        }).then((resp) => {
+            if (resp.data.success){
+                self.log = {text: '密码修改成功', level: 'info'}
+            }else{
+                self.log = {text: {1: "旧密码错误"}[resp.data.error], level: 'error'}
+            }
+            self.opasswd = ''
+            self.npasswd = ''
+            self.cpasswd = ''
+        })
+    }
+
 })
 .name;

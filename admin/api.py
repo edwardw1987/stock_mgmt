@@ -81,9 +81,10 @@ class UserPassword(MethodView):
     decorators = [login_required]
 
     def post(self):
-        op = util.form_get("opasswd", required=True)
-        np = uitl.form_get("npasswd", required=True)
-        cp = uitl.form_get("cpasswd", required=True)
+        jd = request.get_json()
+        op = jd["opasswd"]
+        np = jd["npasswd"]
+        cp = jd["cpasswd"]
         if not current_user.confirm_password(op):
             ret = {"success": False, "error": 1}
         elif np != cp:

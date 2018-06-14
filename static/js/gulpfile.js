@@ -27,5 +27,5 @@ gulp.task('sso', function(){
     .pipe(gulp.dest(__dirname));
 });
 gulp.task('watch', function() {
-  gulp.watch('src/*.js', ['babel']);
+  gulp.watch(['src/*.js', 'src/partials/*.html'], ['babel']);
 });
