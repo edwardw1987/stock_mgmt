@@ -1,12 +1,11 @@
 /*
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
- * @Last Modified by:   edward
- * @Last Modified time: 2018-06-13 23:46:57
+ * @Last Modified by:   wangwh8
+ * @Last Modified time: 2018-06-14 11:55:44
  */
 
 'use strict';
-import flowHtml from "../../../templates/partials/flow.html"
 export default 
 angular.module('config', [])
     .config(['$interpolateProvider', function($interpolateProvider){
@@ -22,28 +21,27 @@ angular.module('config', [])
     //
     // Now set up the states
 
-
-    var stockState = {
+    $stateProvider
+    .state({
         name: 'stock',
         url: '/stock',
-        templateUrl: 'partials/stock_list.html',
-        controller: "stockCtrl"
-    }
-    var stockFlowsState = {
+        template: '<stock-list></stock-list>',
+    })
+    .state({
         name:'stockFlows',
         url:'/stock/{id}/flows',
-        templateUrl: "partials/stock_flows.html",
-        controller: ['$scope', '$stateParams', 'scan', function($scope, $stateParams, scan){
-            $scope.curStock = null;
-            scan.listFlow({stockid: $stateParams.id}).then((resp) => {
-                $scope.flowList = resp.data.flowList;
-                $scope.stock = resp.data.stock;
-            })
-            $scope.goBack = ()=>{
-                window.history.back();
-            }
-        }]
-    }
+        template: "<stock-flows></stock-flows>",
+    })
+    .state({
+        name: 'flowIn',
+        url: '/flow-in',
+        template: '<flowin-list></flowin-list>',
+    })
+    .state({
+        name: 'flowOut',
+        url: '/flow-out',
+        template: '<flowout-list></flowout-list>',
+    })
     var stockInState = {
         name:'stockIn',
         url:'/stock/{id}/in',
@@ -68,26 +66,5 @@ angular.module('config', [])
             })
         }]
     }
-    var flowInState = {
-        name: 'flowIn',
-        url: '/flow-in',
-        template: flowHtml,
-        // templateUrl: "partials/flow.html",
-        controller: 'flowInCtrl'
-    }
-    var flowOutState = {
-        name: 'flowOut',
-        url: '/flow-out',
-        templateUrl: "partials/flow.html",
-        controller: 'flowOutCtrl'
-    }
-    // ------------------  
-    $stateProvider
-        .state(stockState)
-        .state(stockFlowsState)
-        .state(stockInState)
-        .state(stockOutState)
-        .state(flowInState)
-        .state(flowOutState)
-    ;
+
 }]).name;

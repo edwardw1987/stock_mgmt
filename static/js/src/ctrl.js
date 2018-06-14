@@ -225,15 +225,25 @@ angular.module('ctrl', [])
     };
     $scope.stock.initStockList();
 })
-.controller('flowInCtrl', ($scope, scan, Flow) => {
+.controller('flowinCtrl', ($scope, scan, Flow) => {
     $scope.flow = new Flow("flow-in", scan);
     $scope.flow.initFlowList();
     $scope.flowText = "入库";
     
 })
-.controller('flowOutCtrl', ($scope, scan, Flow) => {
+.controller('flowoutCtrl', ($scope, scan, Flow) => {
     $scope.flow = new Flow("flow-out", scan);
     $scope.flow.initFlowList();
     $scope.flowText = "出库";
+})
+.controller('stockFlowsCtrl', function($scope, $stateParams, scan){
+    $scope.curStock = null;
+    scan.listFlow({stockid: $stateParams.id}).then((resp) => {
+        $scope.flowList = resp.data.flowList;
+        $scope.stock = resp.data.stock;
+    })
+    $scope.goBack = ()=>{
+        window.history.back();
+    }
 })
 .name;

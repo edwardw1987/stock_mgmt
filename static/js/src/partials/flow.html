@@ -107,21 +107,15 @@
       </div>
     </div>
   </div>
-  {% set msgs = get_flashed_messages(False, ["error"]) %}
-  {% if msgs|length > 0 %}
-  <div class="panel panel-danger shake animated">
+  <div class="panel panel-danger shake animated" ng-show="flow.error">
     <div class="panel-heading">
       <label>非库存条形码</label>
     </div>
     <div class="panel-body">
       <ul class="text-danger">
-        {% for msg in msgs %}
-          {{ msg | safe}}
-        {% endfor %}            
       </ul>
     </div>
   </div>
-  {% endif %}
   <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="upload-in-batch-modal">
     <div class="modal-dialog">
       <div class="modal-content">
