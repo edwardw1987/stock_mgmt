@@ -1,6 +1,6 @@
 module.exports = {
   entry: {
-    app: ['./angular.min.js', './angular-animate.min.js', './angular-ui-router.js','./src/main.js'],
+    app: ['./angular.min.js', './angular-animate.min.js','./src/main.js'],
   // test: 'test/test.js',
   },
   output: {

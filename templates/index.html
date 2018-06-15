@@ -2,14 +2,13 @@
 {% block main %}
   <div class="container-fluid">
     <div class="row">
-      <div ui-view></div>
+      <stock-list></stock-list>
     </div>
   </div>
   <script>
-      $(function(){
-          $("body").on("click", ".toggle-info", function(){
-              $(this).parent().children(".alert").slideToggle();
-          })
-      })
+    $(function(){
+      $('#nav-stock').addClass("active")
+        .siblings().removeClass("active")
+    })
   </script>
 {% endblock %}

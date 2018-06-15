@@ -1,4 +1,5 @@
 from flask import render_template, request, Blueprint, jsonify, abort, url_for, flash
+from flask import redirect
 from flask.views import MethodView
 from flask_login import login_required
 from scan.models import Stock, Flow, db
@@ -12,6 +13,16 @@ app = Blueprint('scan', __name__, template_folder='templates')
 @login_required
 def home(): 
     return render_template("index.html", next=url_for(".home"))
+
+@app.route('/flowin')
+@login_required
+def flowin():
+    return render_template("flowin.html",  next=url_for(".flowin"))
+
+@app.route('/flowout')
+@login_required
+def flowout():
+    return render_template("flowout.html", next=url_for(".flowout"))
 
 class FlowMixin(object):
 

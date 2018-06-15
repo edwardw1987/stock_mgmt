@@ -6,6 +6,7 @@ import util
 import scan.api
 import admin.api
 import auth.api
+import settings.api
 from auth.manager import login_manager
 # from admin import models
 from database import init_db
@@ -31,6 +32,7 @@ app = make_app()
 app.register_blueprint(scan.api.app, url_prefix="")
 app.register_blueprint(admin.api.app, url_prefix="/admin")
 app.register_blueprint(auth.api.app, url_prefix="/auth")
+app.register_blueprint(settings.api.app, url_prefix="/settings")
 
 @app.context_processor
 def ctx_pr():

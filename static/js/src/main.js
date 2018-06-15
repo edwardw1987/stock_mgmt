@@ -7,7 +7,6 @@ import component from "./component";
 
 angular.module('app', [
     'ngAnimate',
-    'ui.router',
     filter,
     ctrl,
     component,

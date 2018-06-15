@@ -14,12 +14,12 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li ui-sref-active="active"><a ui-sref="stock">库存</a></li>
+          <li id="nav-stock"><a href="{{ url_for('scan.home') }}">库存</a></li>
           <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">扫码&nbsp;<span class="caret"></span></a>
             <ul class="dropdown-menu">            
-              <li ui-sref-active="active"><a ui-sref="flowIn">扫码入库</a></li>
-              <li ui-sref-active="active"><a ui-sref="flowOut">扫码出库</a></li>
+              <li id="nav-flowin"><a href="{{ url_for('scan.flowin') }}">扫码入库</a></li>
+              <li id="nav-flowout"><a href="{{ url_for('scan.flowout') }}">扫码出库</a></li>
             </ul>
           </li>
         </ul>
@@ -28,8 +28,8 @@
           <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ session.displayName }}&nbsp;<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li>
-                <a ui-sref="settings"><i class="fa fa-fw fa-gear"></i>设置</a></li>
+              <li id="nav-menu-settings">
+                <a href="{{ url_for('settings.index') }}"><i class="fa fa-fw fa-gear"></i>设置</a></li>
               <li class="divider"></li>
               <li>                  
                   <a href="{{ url_for('auth.logout', next=next)}}">
