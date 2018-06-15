@@ -7,6 +7,7 @@ import component from "./component";
 
 angular.module('app', [
     'ngAnimate',
+    'base64',
     filter,
     ctrl,
     component,

@@ -2,7 +2,6 @@
 import platform
 import xml.etree.ElementTree as ET
 from os import path
-
 from flask import request, flash, render_template, url_for, abort, current_app
 import base64
 from datetime import datetime, timedelta
@@ -108,11 +107,11 @@ class StringCooker(object):
         return s.translate(trantab);
     
     def encode(self, s):
-        encoded = base64.b64encode(s)
+        encoded = base64.b64encode(str(s))
         return self._translate(encoded, True)
         
     def decode(self, s):
-        encoded = self._translate(s, False)
+        encoded = self._translate(str(s), False)
         return base64.b64decode(encoded)
 
 string_cooker = StringCooker()
@@ -275,12 +274,14 @@ class SerialList(list):
         super(SerialList, self).append(e)
 
 def main():
-    sample = [0.0, None, None, None, None, None, None, 6.0, None, None, None, None, None, None, 12.0, None, None, None, None, None, None, 17.0, None, None, None, None, None, None, 28.6, None, None, None, None, None, None, 40.2, None, None, None, None, None, None, 40.2, None, None, None, None, None, None, 40.2, None, None, None, None, None, None, 51.8, None, None, None, None, None, None, 63.4, None, None, None, None, None, None, 75.0, None, None, None, None, None, None, 82.9, None, None, None, None, None, None, 91.2, None, None, None, None, None, None, 99.7, None, None, None, None, None, None, 100.0]
-    print len(sample)
-    ret= fill_null_linear(sample)
-    # ret = fill_null_flat(sample)
-    print len(ret)
-    print ret
+
+    print string_cooker.decode("MTExMQtt=")
+    # sample = [0.0, None, None, None, None, None, None, 6.0, None, None, None, None, None, None, 12.0, None, None, None, None, None, None, 17.0, None, None, None, None, None, None, 28.6, None, None, None, None, None, None, 40.2, None, None, None, None, None, None, 40.2, None, None, None, None, None, None, 40.2, None, None, None, None, None, None, 51.8, None, None, None, None, None, None, 63.4, None, None, None, None, None, None, 75.0, None, None, None, None, None, None, 82.9, None, None, None, None, None, None, 91.2, None, None, None, None, None, None, 99.7, None, None, None, None, None, None, 100.0]
+    # print len(sample)
+    # ret= fill_null_linear(sample)
+    # # ret = fill_null_flat(sample)
+    # print len(ret)
+    # print ret
     # print parse_output('./outputs/project 1/1/log-20170313-111655.html')
     # cooker = StringCooker()
     # s = 'thinkcloud'

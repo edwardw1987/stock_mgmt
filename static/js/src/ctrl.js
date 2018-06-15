@@ -109,6 +109,27 @@ angular.module('ctrl', [])
     }
     return flow;
 })
+.constant('translate', function translate(s){
+    
+    function getTransMap(intab, outtab){
+        let transMap = {}
+        intab.split('').forEach(function(e, i){
+            transMap[e] = outtab[i]
+        })
+        return transMap
+    }
+    let intab = "AbdGhjm1pt9Z=",
+        outtab = "192AGZbdhjmpt",
+        transMap = getTransMap(intab, outtab)
+    ;
+    var arr = s.split('')
+    arr.forEach(function(e, i){
+        if (e in transMap){
+            arr[i] = transMap[e]
+        }
+    })
+    return arr.join('')
+})
 .controller('stockCtrl', function($scope, $timeout, scan){
     $scope.stock = {
         duplicate: [],
@@ -247,7 +268,7 @@ angular.module('ctrl', [])
     }
 })
 .controller('changepasswordCtrl', 
-function($scope, $timeout, admin){
+function($scope, $timeout, $base64, admin, translate){
     let self = $scope;
     self.opasswd = ''
     self.npasswd = ''
@@ -266,9 +287,9 @@ function($scope, $timeout, admin){
     }
     self.onSubmitPasswordForm = function(){
         admin.updateUserPassword({
-            opasswd: self.opasswd,
-            npasswd: self.npasswd,
-            cpasswd: self.cpasswd
+            opasswd: translate($base64.encode(self.opasswd)),
+            npasswd: translate($base64.encode(self.npasswd)),
+            cpasswd: translate($base64.encode(self.cpasswd))
         }).then((resp) => {
             self.log = null;
             if (resp.data.success){
