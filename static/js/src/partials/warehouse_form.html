@@ -1,0 +1,17 @@
+<div class="col-md-4 col-xs-12 col-md-offset-4">
+    <div class="panel panel-info">
+        <div class="panel-heading">
+          <h3 class="title">创建一个新的仓库</h3>
+        </div>
+        <div class="panel-body">
+            <form method="post" name="warehouseForm" ng-submit="$ctrl.onSubmitWarehouseForm()">
+            <div class="form-layout">
+                <label>仓库名称</label>
+                <input type="text" class="form-control" placeholder="仓库名称" required="" autofocus="" ng-model="$ctrl.warehouse.name">
+                <label ng-class="{error: 'text-danger', info: 'text-success'}[$ctrl.log.level]" ng-if="$ctrl.log">[[ $ctrl.log.text + ", " + $ctrl.countdown + "秒后刷新..."]]</label>
+                <button class="btn btn-primary submit-btn" ng-disabled="$ctrl.submitDisabled">创建</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="delete-modal">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Close</span>
+          </button>
+          <h4 class="modal-title text-center">[[ $ctrl.modal.title ]]</h4>
+        </div>
+        <div class="modal-body">
+          <form class="form-inline" ng-submit="$ctrl.delete()">
+            <div class="text-center">
+              <span class="help-block">确定删除
+                <b class="text-danger">[[ $ctrl.modal.confirmText1 ]]</b></span>
+              <span class="text-danger"><b>[[ $ctrl.modal.confirmText2 ]]</b></span>
+            </div>
+            <div class="modal-footer">
+              <div class="btn-group">
+              <button type="button" class="btn btn-default" data-dismiss="modal">
+                [[ $ctrl.modal.cancelBtnText || '取消' ]]
+              </button>
+              <button type="submit" class="btn btn-danger">
+                [[ $ctrl.modal.submitBtnText || '删除' ]]
+              </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>

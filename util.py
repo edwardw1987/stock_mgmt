@@ -2,7 +2,7 @@
 import platform
 import xml.etree.ElementTree as ET
 from os import path
-from flask import request, flash, render_template, url_for, abort, current_app
+from flask import request, flash, render_template, url_for, abort, current_app, redirect
 import base64
 from datetime import datetime, timedelta
 import json

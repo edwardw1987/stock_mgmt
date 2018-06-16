@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: wangwh8
 # @Date:   2018-02-08 15:50:00
-# @Last Modified by:   wangwh8
-# @Last Modified time: 2018-05-31 13:22:37
+# @Last Modified by:   edward
+# @Last Modified time: 2018-06-16 19:54:06
 from database import db
 from util import ModelMixin
 from sqlalchemy import func
@@ -16,7 +16,7 @@ class Flow(db.Model, ModelMixin):
         meanwhile set `flowed` -> True
     """
     id = db.Column(db.Integer(), primary_key=True)
-    flowed_stock_quantity = db.Column(db.Integer()) 
+    flowed_stock_quantity = db.Column(db.Integer(), default=0) 
     flowin_quantity = db.Column(db.Integer(), default=0)
     flowout_quantity = db.Column(db.Integer(), default=0) 
     flowed = db.Column(db.Boolean(), default=False)
@@ -53,6 +53,7 @@ class Stock(db.Model, ModelMixin):
     quantity =  db.Column(db.Integer(), default=0)
     measurement = db.Column(db.Integer())
     flows = db.relationship('Flow', backref='stock', lazy='dynamic')
+    warehouse_id = db.Column(db.Integer(), db.ForeignKey('warehouse.id'))
 
     @classmethod
     def create(cls, data):
@@ -109,6 +110,24 @@ class Stock(db.Model, ModelMixin):
         db.session.add(self)
         db.session.commit()
         return self
+
+
+class Warehouse(db.Model, ModelMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(64))
+    stocks = db.relationship('Stock', backref='warehouse', lazy='dynamic')
+
+    @classmethod
+    def has_warehouse(cls):
+        one = cls.query.first()
+        return bool(one)
+
+    @classmethod
+    def create(cls, data):
+        inst = cls(**data)
+        db.session.add(inst)
+        db.session.commit()
+        return inst
 # class TestArchive(object):
 
 #     def _create(self, model, kwargs):

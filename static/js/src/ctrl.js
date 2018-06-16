@@ -1,6 +1,6 @@
 export default 
 angular.module('ctrl', [])
-.constant('Flow', function Flow(method, scan){
+.constant('Flow', function Flow($scope, method, scan){
     let flow = {
         method: method,
         scan: scan,
@@ -106,6 +106,9 @@ angular.module('ctrl', [])
         popupCommit(item){
             this.commitItem = item;
         },
+        toggleSidebar(){
+            $scope.$emit("toggleSidebar");
+        }
     }
     return flow;
 })
@@ -130,14 +133,35 @@ angular.module('ctrl', [])
     })
     return arr.join('')
 })
-.controller('LayoutCtrl', function(){
-    this.sidebarOpen = false;
-    this.toggleSidebar = () => {
-        this.sidebarState = ! this.sidebarState;
-    }
+.constant('getCurWid', function(){
+    return angular.element('[name="wid"]').val();
 })
-.controller('stockCtrl', function($scope, $timeout, scan){
+.controller('layoutCtrl', function($scope){
+    this.key = "_sidebarState"
+    this.sidebar = {
+        open: false,
+        show: false,
+    }
+    this.toggleSidebar = (event) => {
+        this.sidebar.open = ! this.sidebar.open;
+    }
+    $scope.$on("popupDelete", (event, data) => {
+        $scope.$broadcast("syncDeleteItem", data)
+    })
+    $scope.$on('toggleSidebar', this.toggleSidebar)
+    $scope.$on('confrimDelete', (event) => {
+        $scope.$broadcast("delete")
+    })
+    $scope.$on("sidebar", (event, open, show) => {
+        this.sidebar = {
+            open: open === null ? this.sidebar.open : open, 
+            show: show === null ? this.sidebar.show : show
+        }
+    })
+})
+.controller('stockCtrl', function($scope, $timeout, scan, getCurWid){
     $scope.stock = {
+        warehouse_id: getCurWid(),
         duplicate: [],
         animate: false,
         show: false,
@@ -199,7 +223,10 @@ angular.module('ctrl', [])
         },
         isDuplicate(){
             this.animate = false;
-            return scan.getStockByBarcode(this.data.barcode).then(function(resp){
+            return scan.queryStock({
+                barcode:this.data.barcode,
+                wid: this.warehouse_id,
+            }).then(function(resp){
                 console.log(resp.data)
                 if (resp.data.success){
                     this.duplicate.push(this.data.barcode)
@@ -217,7 +244,9 @@ angular.module('ctrl', [])
                     this.animate = true;
                     return;
                 }
-                scan.newStock(this.data).then(function(resp){
+                let newStock = Object.assign({}, this.data);
+                newStock.warehouse_id = this.warehouse_id;
+                scan.newStock(newStock).then(function(resp){
                     if (resp.data.success){
                         window.location.reload();
                     }else{
@@ -228,6 +257,7 @@ angular.module('ctrl', [])
         },
         popupDelete(item){
             this.deleteItem = item;
+            $scope.$emit("popupDelete", item);
         },
         delete(){
             if (!this.deleteItem) return;
@@ -241,24 +271,32 @@ angular.module('ctrl', [])
             return false;
         },
         initStockList(){
-            scan.listStock().then((resp) => {
+            scan.listStock({wid: this.warehouse_id}).then((resp) => {
                 this.stockList = resp.data.stockList;
                 this.show = true;
             })
             scan.mOptions().then((resp) => {
                 this.mOptions = resp.data;
             })
+        },
+        toggleSidebar(){
+            $scope.$emit("toggleSidebar");
         }
     };
+    $scope.$on("delete", () => {
+        $scope.stock.delete();
+    })
     $scope.stock.initStockList();
+    $scope.$emit("sidebar", null, true);
+
 })
 .controller('flowinCtrl', ($scope, scan, Flow) => {
-    $scope.flow = new Flow("flow-in", scan);
+    $scope.flow = new Flow($scope, "flow-in", scan);
     $scope.flow.initFlowList();
     $scope.flowText = "入库";   
 })
 .controller('flowoutCtrl', ($scope, scan, Flow) => {
-    $scope.flow = new Flow("flow-out", scan);
+    $scope.flow = new Flow($scope, "flow-out", scan);
     $scope.flow.initFlowList();
     $scope.flowText = "出库";
 })
@@ -271,6 +309,7 @@ angular.module('ctrl', [])
     $scope.goBack = ()=>{
         window.history.back();
     }
+    $scope.$emit("sidebar", false, false);
 })
 .controller('changepasswordCtrl', 
 function($scope, $timeout, $base64, admin, translate){
@@ -306,6 +345,44 @@ function($scope, $timeout, $base64, admin, translate){
             self.npasswd = ''
             self.cpasswd = ''
         })
+    }
+})
+.controller('warehouseFormCtrl', function($scope, $timeout, scan){
+    let self = this;
+    self.warehouse = {}
+    self.log = null
+    self.countdown = 5;
+    self.submitDisabled = false;
+    self.onSubmitWarehouseForm = () => {
+        scan.newWarehouse(self.warehouse).then((resp) => {
+            self.log = null;
+            if (resp.data.success){
+                self.log = {level: 'info', text: '创建成功'}
+                self.submitDisabled = true;
+                var interval = setInterval(() => {
+                    $scope.$apply(() => {
+                        self.countdown --;
+                    })
+                    if (self.countdown === 0){
+                        window.location.reload();
+                    }
+                }, 1000)
+
+            }else{
+                self.log = {level: 'error', text: {1: '仓库已存在'}[resp.data.error]}
+            }
+        })
+    }
+})
+.controller('deleteModalCtrl', function($scope){
+    $scope.$on("syncDeleteItem", (event, data, type) => {
+        this.modal = {
+            title: '删除物料',
+            confirmText1: [data.name, ' x ', data.quantity + ' ?'].join('')
+        }
+    })   
+    this.delete = () => {
+        $scope.$emit("confrimDelete")
     }
 })
 .name;

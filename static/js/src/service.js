@@ -20,9 +20,10 @@ angular.module('rest', [])
             method: "POST"
         })
     }
-    this.listStock = function(){
+    this.listStock = function(data){
         return $http({
-            url: "/api/stock"
+            url: "/api/stock",
+            params: data,
         })
     }
     this.getStock = function(id){
@@ -31,12 +32,10 @@ angular.module('rest', [])
         })
 
     }
-    this.getStockByBarcode = function(barocde){
+    this.queryStock = function(data){
         return $http({
             url: "/api/stock/",
-            params: {
-                barcode: barocde
-            }
+            params: data
         })
     }
     this.newFlow = function(data){
@@ -83,6 +82,19 @@ angular.module('rest', [])
         return $http({
             url: "/api/flow/",
             params: data
+        })
+    }
+    this.listWarehouse = function(data){
+        return $http({
+            url: "/api/warehouse",
+            params: data
+        })
+    }
+    this.newWarehouse = function(data){
+        return $http({
+            url: "/api/warehouse",
+            method: "POST",
+            data: data,
         })
     }
 })

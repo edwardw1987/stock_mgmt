@@ -8,21 +8,30 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">库存管理</a>
+        <a class="navbar-brand" href="/">库存管理</a>
       </div>
 
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        {% set results = Warehouse.query.order_by(Warehouse.id.desc()).all() %}
+        {% if results %}
+        {% set cur = current or results[0] %}
+        <input type="hidden" name="wid" value="{{ cur.id }}">
+        <input type="hidden" name="wname" value="{{ cur.name }}">
         <ul class="nav navbar-nav">
-          <li id="nav-stock"><a href="{{ url_for('scan.home') }}">库存</a></li>
           <li class="dropdown">
-            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">扫码&nbsp;<span class="caret"></span></a>
+            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ cur.name }}
+              &nbsp;<span class="caret"></span></a>
             <ul class="dropdown-menu">            
-              <li id="nav-flowin"><a href="{{ url_for('scan.flowin') }}">扫码入库</a></li>
-              <li id="nav-flowout"><a href="{{ url_for('scan.flowout') }}">扫码出库</a></li>
+              {% for item in results %}
+              <li><a href="{{ url_for('scan.warehouse.detail', id=item.id) }}">{{ item.name }}</a></li>
+              {% endfor %}
+              <li class="divider"></li>
+              <li><a href="{{ url_for('scan.warehouse.new') }}">新建仓库</a></li>
             </ul>
           </li>
         </ul>
+        {% endif %}
         <ul class="nav navbar-nav navbar-right" style="margin-right: 10px;">
           {% if current_user.is_authenticated %}
           <li class="dropdown">

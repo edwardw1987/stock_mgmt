@@ -1,12 +1,11 @@
 {% extends "layout.html" %}
 {% block main %}
   <div class="row">
-    <sidebar></sidebar>
     <flowout-list></flowout-list>
   </div>
   <script>
     $(function(){
-      $('#nav-flowout').addClass("active")
+      $('#tab-flowout').addClass("active")
         .siblings().removeClass("active")
     })
   </script>

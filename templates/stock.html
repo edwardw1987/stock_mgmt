@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block main %}
   <div class="row"> 
-    <div ui-view></div>
+    <stock-list></stock-list>
   </div>
   <script>
     $(function(){
-      $('#nav-stock').addClass("active")
+      $('#tab-stock').addClass("active")
         .siblings().removeClass("active")
     })
   </script>

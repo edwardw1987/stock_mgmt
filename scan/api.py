@@ -1,28 +1,69 @@
-from flask import render_template, request, Blueprint, jsonify, abort, url_for, flash
+from flask import render_template, request, Blueprint, jsonify, abort, url_for
 from flask import redirect
 from flask.views import MethodView
 from flask_login import login_required
-from scan.models import Stock, Flow, db
+from scan.models import Stock, Flow, db, Warehouse
 from collections import Counter
+from functools import wraps
 import util
 
 
 app = Blueprint('scan', __name__, template_folder='templates')
 
-@app.route('/')
-@login_required
-def home(): 
-    return render_template("index.html", next=url_for(".home"))
 
-@app.route('/flowin')
-@login_required
-def flowin():
-    return render_template("flowin.html",  next=url_for(".flowin"))
+def warehouse_required(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not Warehouse.has_warehouse():
+            return render_template("warehouse/new.html")
+        return fn(*args, **kwargs)
+    return wrapper
 
-@app.route('/flowout')
-@login_required
-def flowout():
-    return render_template("flowout.html", next=url_for(".flowout"))
+
+class Home(MethodView):
+    decorators = [login_required]
+    
+    def get(self):
+        # if not Warehouse.has_warehouse():
+        #     return redirect(url_for(".warehouse"))
+        return redirect(url_for(".warehouse.redirect"))
+
+
+class WarehouseNewView(MethodView):
+    decorators = [login_required]
+    def get(self):
+        return render_template("warehouse/new.html")
+
+class WarehouseRedirectView(MethodView):
+    
+    decorators = [login_required, warehouse_required]
+
+    def get(self):
+        wh = Warehouse.query.order_by(Warehouse.id.desc()).first()
+        return redirect(url_for("scan.warehouse.detail", id=wh.id))
+
+
+class WarehouseDetailView(MethodView):
+    decorators = [login_required]
+    def get(self, id):
+        wh = Warehouse.query.get(id)
+        if not wh:
+            return redirect(url_for("scan.warehouse.redirect"))
+        return render_template("index.html", 
+            current=wh,
+            next=url_for("scan.warehouse.detail", id=id))
+
+class ApiWarehouse(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        jd = request.get_json()
+        if Warehouse.query.filter_by(name=jd["name"]).first():
+            return jsonify({"success": False, "error": 1})
+        wh = Warehouse.create(jd)
+        ret = {"success": True, "stock": wh.to_dict()}
+        return jsonify(ret)
+
 
 class FlowMixin(object):
 
@@ -148,7 +189,6 @@ class ApiFlow(MethodView, FlowMixin):
         elif action == "create":
             stock = Stock.query.filter_by(barcode=jd["barcode"]).first()
             if not stock:
-                flash("<li>%s</li>" % jd["barcode"], category="error")
                 return jsonify({"success": False})
             quantityField = self.get_quantity_field(jd["method"])
             createInfo = {
@@ -186,8 +226,8 @@ class ApiFlowBatch(MethodView, FlowMixin):
             else:
                 f = Flow.create(createInfo)
             ret["success"] += count
-        if ret["failedBarcodes"]:
-            flash("".join("<li>%s</li>" % i for i in ret["failedBarcodes"]), category="error")
+        # if ret["failedBarcodes"]:
+        #     flash("".join("<li>%s</li>" % i for i in ret["failedBarcodes"]), category="error")
         return jsonify(ret)
 
 class ApiStock(MethodView):
@@ -208,15 +248,20 @@ class ApiStock(MethodView):
 
     def get(self, stock_id=None):
         barcode = util.args_get("barcode")
+        warehouse_id = util.args_get("wid")
         ret = {"success": True}
         if stock_id:
             stock = Stock.query.get(stock_id)
             return self.response_detail(stock)
-        elif barcode:
-            stock = Stock.query.filter_by(barcode=barcode).first()
+        if not warehouse_id:
+            abort(404)
+        if barcode:
+            stock = Stock.query.filter_by(
+                barcode=barcode, warehouse_id=warehouse_id).first()
             return self.response_detail(stock)
+        ret["stockList"] = [self.handle_stock(i) for i in \
+            Stock.query.filter_by(warehouse_id=warehouse_id).order_by(Stock.id.desc())]
         # handle stock list
-        ret["stockList"] = [self.handle_stock(i) for i in Stock.query.order_by(Stock.id.desc())]
         return jsonify(ret)
 
     def on_delete_stock(self, jd):
@@ -235,9 +280,11 @@ class ApiStock(MethodView):
         if action == "delete":
             ret = self.on_delete_stock(jd)
         elif action == "create":
-            if Stock.query.filter_by(barcode=jd["barcode"]).first():
+            if Stock.query.filter_by(
+                barcode=jd["barcode"], 
+                warehouse_id=jd["warehouse_id"]).first():
                 return jsonify({"success": False, "error": "Duplicate Barcode"})
-            allowedKeys = {"name", "barcode", "unitprice", "measurement"}
+            allowedKeys = {"name", "barcode", "unitprice", "measurement", "warehouse_id"}
             stock = Stock.create({k: jd[k] for k in allowedKeys})
             ret["stock"] = self.handle_stock(stock)
         return jsonify(ret)
@@ -248,15 +295,12 @@ def meas_options():
     data = Stock.get_measurement_map()
     return jsonify(data)
 
-@app.route('/partials/<tplname>')
-def partials_tpl(tplname):
-    from jinja2.exceptions import TemplateNotFound
-    try:
-        return render_template('partials/' + tplname)
-    except TemplateNotFound as e:
-        return e.message
-
+app.add_url_rule("/", view_func=Home.as_view("home"))
+app.add_url_rule("/warehouse/new", view_func=WarehouseNewView.as_view("warehouse.new"))
+app.add_url_rule("/warehouse/<int:id>/", view_func=WarehouseDetailView.as_view("warehouse.detail"))
+app.add_url_rule("/warehouse", view_func=WarehouseRedirectView.as_view("warehouse.redirect"))
 app.add_url_rule("/api/stock/<int:stock_id>", view_func=ApiStock.as_view("api.stock.detail"))
 app.add_url_rule("/api/stock/", view_func=ApiStock.as_view("api.stock"))
 app.add_url_rule("/api/flow/", view_func=ApiFlow.as_view("api.flow"))
 app.add_url_rule("/api/flow/batch", view_func=ApiFlowBatch.as_view("api.flow.batch"))
+app.add_url_rule("/api/warehouse", view_func=ApiWarehouse.as_view("api.warehouse"))

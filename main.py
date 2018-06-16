@@ -8,8 +8,8 @@ import admin.api
 import auth.api
 import settings.api
 from auth.manager import login_manager
-# from admin import models
 from database import init_db
+from scan.models import Warehouse
 reload(sys)
 sys.setdefaultencoding("utf8")
 
@@ -39,4 +39,5 @@ def ctx_pr():
     ext = util.ContextExtension(app)
     return {
         'static_url': ext.static_url,
+        'Warehouse': Warehouse
     }

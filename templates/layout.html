@@ -2,22 +2,38 @@
 
 {% block layout %}
 {% include "nav.html"%}
-<div class="container-fluid" ng-controller="LayoutCtrl as $ctrl">
+<div class="container-fluid" ng-controller="layoutCtrl as $ctrl" ng-app="warehouse">
   <div class="row">
-    <div class="col-md-12 col-xs-12">          
-      <button ng-click="$ctrl.toggleSidebar()" class="btn btn-default">
-        选择仓库<i class="fa fa-fw fa-exchange"></i>刘行</button>
+    <div class="col-md-12 col-xs-12" ng-cloak>  
+    <h3 class="title" id="page-header"></h3>        
+      <ul class="nav nav-tabs">
+        <li id="tab-stock" role="presentation" ui-sref-active="active">
+          <a ui-sref="stock">库存</a></li>
+        <li id="tab-flowin" role="presentation" ui-sref-active="active">
+          <a ui-sref="flowin">扫码入库</a></li>
+        <li id="tab-flowout" role="presentation" ui-sref-active="active">
+          <a ui-sref="flowout">扫码出库</a></li>
+      </ul>
+      <ul class="nav nav-tabs">
+        <li role="presentation" ng-click="$ctrl.toggleSidebar()" ng-show="$ctrl.sidebar.show">
+          <a href="javascript:;">
+            <i class="fa fa-fw fa-bars"></i>
+          </a>
+        </li>
+      </ul>
     </div>
   </div>
-  <div id="offcanvas" ng-class="{true: 'sidebar-open', false: 'sidebar-close'}[$ctrl.sidebarState]">
+  <div id="offcanvas" ng-class="{true: 'sidebar-open', false: 'sidebar-close'}[$ctrl.sidebar.open]">
     {% block main %}{% endblock %}
   </div>
+  <delete-modal></delete-modal>
 </div>
 <script>
     $(function(){
         $("body").on("click", ".toggle-info", function(){
             $(this).parent().children(".alert").slideToggle();
         })
+        $("#page-header").text($('[name="wname"]').val());
     })
 </script>
 {% endblock %}
