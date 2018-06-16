@@ -17,4 +17,4 @@ def index():
 @app.route('/password')
 @login_required
 def password():
-    return render_template("password.html", next=url_for(".password"))
+    return render_template("settings/password.html", next=url_for(".password"))

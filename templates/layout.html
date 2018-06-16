@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block layout %}
+{% include "nav.html"%}
+<div class="container-fluid" ng-controller="LayoutCtrl as $ctrl">
+  <div class="row">
+    <div class="col-md-12 col-xs-12">          
+      <button ng-click="$ctrl.toggleSidebar()" class="btn btn-default">
+        选择仓库<i class="fa fa-fw fa-exchange"></i>刘行</button>
+    </div>
+  </div>
+  <div id="offcanvas" ng-class="{true: 'sidebar-open', false: 'sidebar-close'}[$ctrl.sidebarState]">
+    {% block main %}{% endblock %}
+  </div>
+</div>
+<script>
+    $(function(){
+        $("body").on("click", ".toggle-info", function(){
+            $(this).parent().children(".alert").slideToggle();
+        })
+    })
+</script>
+{% endblock %}

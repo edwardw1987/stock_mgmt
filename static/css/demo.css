@@ -2,14 +2,16 @@
 * @Author: wangwh8
 * @Date:   2018-05-24 12:46:46
 * @Last Modified by:   edward
-* @Last Modified time: 2018-06-12 00:05:56
+* @Last Modified time: 2018-06-15 23:28:46
 */
 /* layout */
 .submit-btn {
     float: right;
     margin-top: 1rem;
 }
-
+body{
+    overflow-x: hidden;
+}
 
 .form-layout{
 /*    padding: 1rem;
@@ -104,3 +106,29 @@ td.quantity i{
  form input.ng-dirty.ng-invalid {
    background: pink;
  }*/
+ #offcanvas{
+    padding-top: 1.2rem;
+ }
+.sidebar {
+    width: 20%;
+    height: 100%;
+    transform: translate3d(-100%, 0, 0);
+    position: absolute;
+
+}
+@media screen and (max-width:768px){
+    .sidebar {
+        width: 100%;
+    }
+    .sidebar-open{
+        transform: translate3d(100%, 0, 0) !important;
+    }
+}
+.sidebar-open {
+    transition: all .5s;
+    transform: translate3d(20%, 0, 0);
+}
+.sidebar-close {
+    transition: all .5s;
+    transform: translate3d(0, 0, 0);
+}

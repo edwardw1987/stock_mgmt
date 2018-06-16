@@ -18,17 +18,6 @@
  -->    <script type="text/javascript" src="{{ static_url('js/bundle.min.js') }}"></script>
 </head>
 <body>
-    {% include "nav.html"%}
-    <div id="main">
-    {% block main %}
-    {% endblock %}
-    </div>
-    <script>
-        $(function(){
-            $("body").on("click", ".toggle-info", function(){
-                $(this).parent().children(".alert").slideToggle();
-            })
-        })
-    </script>
+    {% block layout %}{% endblock %}
 </body>
 </html>

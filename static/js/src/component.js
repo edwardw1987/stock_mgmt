@@ -4,6 +4,7 @@ import stockFlowsHtml from "./partials/stock_flows.html"
 import flowHtml from "./partials/flow.html"
 import passwordFormHtml from "./partials/settings_password.html"
 import settingsHtml from "./partials/settings.html"
+import sidebarHtml from "./partials/sidebar.html"
 
 
 export default 
@@ -34,5 +35,8 @@ angular.module('component', [])
 })
 .component('settingsNav', {
   template: settingsHtml,
+})
+.component('sidebar', {
+  template: sidebarHtml,
 })
 .name;

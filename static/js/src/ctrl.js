@@ -130,6 +130,12 @@ angular.module('ctrl', [])
     })
     return arr.join('')
 })
+.controller('LayoutCtrl', function(){
+    this.sidebarOpen = false;
+    this.toggleSidebar = () => {
+        this.sidebarState = ! this.sidebarState;
+    }
+})
 .controller('stockCtrl', function($scope, $timeout, scan){
     $scope.stock = {
         duplicate: [],
@@ -249,8 +255,7 @@ angular.module('ctrl', [])
 .controller('flowinCtrl', ($scope, scan, Flow) => {
     $scope.flow = new Flow("flow-in", scan);
     $scope.flow.initFlowList();
-    $scope.flowText = "入库";
-    
+    $scope.flowText = "入库";   
 })
 .controller('flowoutCtrl', ($scope, scan, Flow) => {
     $scope.flow = new Flow("flow-out", scan);
@@ -302,6 +307,5 @@ function($scope, $timeout, $base64, admin, translate){
             self.cpasswd = ''
         })
     }
-
 })
 .name;

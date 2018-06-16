@@ -1,9 +1,8 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 {% block main %}
-  <div class="container-fluid">
-    <div class="row">
-      <stock-list></stock-list>
-    </div>
+  <div class="row"> 
+    <sidebar></sidebar>
+    <stock-list></stock-list>
   </div>
   <script>
     $(function(){
