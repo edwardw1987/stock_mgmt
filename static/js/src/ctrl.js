@@ -294,11 +294,13 @@ angular.module('ctrl', [])
     $scope.flow = new Flow($scope, "flow-in", scan);
     $scope.flow.initFlowList();
     $scope.flowText = "入库";   
+    $scope.$emit("sidebar", null, true);
 })
 .controller('flowoutCtrl', ($scope, scan, Flow) => {
     $scope.flow = new Flow($scope, "flow-out", scan);
     $scope.flow.initFlowList();
     $scope.flowText = "出库";
+    $scope.$emit("sidebar", null, true);
 })
 .controller('stockFlowsCtrl', function($scope, $stateParams, scan){
     $scope.curStock = null;
