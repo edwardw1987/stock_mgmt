@@ -1,11 +1,11 @@
 export default 
 angular.module('ctrl', [])
-.constant('Flow', function Flow($scope, method, scan){
+.constant('Flow', function Flow($scope, $state, $timeout, scan, data){
     let flow = {
-        method: method,
+        error: null,
+        method: data.method,
         scan: scan,
         inputBarCode: '',
-        barcodeLines:'',
         flowList: [],
         doneList: [],
         onFly: false,
@@ -36,27 +36,26 @@ angular.module('ctrl', [])
             })
         },
         initFlowList(){
-            console.log(this.method)
+            this.show = false;
             this.scan.listFlow({method: this.method}).then((resp) => {
                 this.flowList = resp.data.flowList;
                 this.show = true;
             })
         },
-        animateStockByRowIndex(index){
-            let animationClass = "lightSpeedIn animated";
-            $("#flow tr").eq(index).addClass(animationClass)
-            .on('animationend webkitAnimationEnd oAnimationEnd', 
-            function(){
-                $(this).removeClass(animationClass);
-            })
-        },
         onBarcodeInput(e){
             if(e.keyCode != 13) return;
             this.scan.newFlow({
-                method: this.method,
+                warehouse_id: data.wid,
+                method: data.method,
                 barcode: this.inputBarcode,
             }).then((resp) => {
-                window.location.reload();
+                if (resp.data.success){
+                    this.error = null;
+                    window.location.reload();
+                }else{
+                    this.inputBarcode = '';
+                    this.error = resp.data.error
+                }
             })
         },
         promise: null,
@@ -82,7 +81,7 @@ angular.module('ctrl', [])
                 }, 500)
             }
         },
-        commit(item){
+        commit(){
             if (!this.commitItem) return;
             this.scan.commitFlow({id: this.commitItem.id, method: this.method}).then((resp) => {
                 if (resp.data.success){
@@ -92,24 +91,48 @@ angular.module('ctrl', [])
                 }
             })
         },
-        onBatchUpload(){
+        upload(input){
             this.scan.newFlowBatch({
-                method: this.method,
-                barcodeLines: this.barcodeLines.split('\n')
+                warehouse_id: data.wid,
+                method: data.method,
+                barcodeLines: input.split('\n').filter((e)=>{return e.trim();})
             }).then((resp) => {
-                window.location.reload();
+                if (resp.data.noneStockBarcode){
+                    $scope.$emit("error", {text: resp.data.noneStockBarcode})
+                }else{
+                    window.location.reload();
+                }
             })
         },
         popupDelete(item){
             this.deleteItem = item;
+            $scope.$emit("popupConfirmModal", {
+                modal: {
+                    title:'删除物料',
+                    text1:'确定删除',
+                    text2:[item.name + ' x ' + item.flowQuantity + item.measurement_text].join(""),
+                }, 
+                submit: () => {this.delete()}
+            });
         },
         popupCommit(item){
             this.commitItem = item;
+            $scope.$emit("popupConfirmModal", {
+                modal: {
+                    title:'更新' + $scope.flowText,
+                    text1:'确认' + $scope.flowText,
+                    text2:[item.name + ' x ' + item.flowQuantity + item.measurement_text].join(""),
+                }, 
+                submit: () => {this.commit()}
+            });
         },
         toggleSidebar(){
             $scope.$emit("toggleSidebar");
         }
     }
+    $scope.$on("upload", (event, input) => {
+        flow.upload(input);
+    })
     return flow;
 })
 .constant('translate', function translate(s){
@@ -137,29 +160,33 @@ angular.module('ctrl', [])
     return angular.element('[name="wid"]').val();
 })
 .controller('layoutCtrl', function($scope){
-    this.key = "_sidebarState"
+    this.key = "_sidebarOpen"
     this.sidebar = {
-        open: false,
+        open: store.get(this.key) || false,
         show: false,
     }
     this.toggleSidebar = (event) => {
         this.sidebar.open = ! this.sidebar.open;
+        store.set(this.key, this.sidebar.open);
     }
-    $scope.$on("popupDelete", (event, data) => {
-        $scope.$broadcast("syncDeleteItem", data)
+    $scope.$on("popupConfirmModal", (event, data) => {
+        $scope.$broadcast("resolveConfirm", data)
     })
     $scope.$on('toggleSidebar', this.toggleSidebar)
-    $scope.$on('confrimDelete', (event) => {
-        $scope.$broadcast("delete")
-    })
     $scope.$on("sidebar", (event, open, show) => {
         this.sidebar = {
             open: open === null ? this.sidebar.open : open, 
             show: show === null ? this.sidebar.show : show
         }
     })
+    $scope.$on("confirmUpload", (event, input) => {
+        $scope.$broadcast("upload", input);
+    })
+    $scope.$on("error", (event, input) => {
+        $scope.$broadcast("showModalError", input)
+    })
 })
-.controller('stockCtrl', function($scope, $timeout, scan, getCurWid){
+.controller('stockCtrl', function($scope, $timeout, $state, scan, getCurWid){
     $scope.stock = {
         warehouse_id: getCurWid(),
         duplicate: [],
@@ -248,7 +275,8 @@ angular.module('ctrl', [])
                 newStock.warehouse_id = this.warehouse_id;
                 scan.newStock(newStock).then(function(resp){
                     if (resp.data.success){
-                        window.location.reload();
+                        // window.location.reload();
+                        $state.reload()
                     }else{
                         alert("error on create")
                     }
@@ -257,7 +285,14 @@ angular.module('ctrl', [])
         },
         popupDelete(item){
             this.deleteItem = item;
-            $scope.$emit("popupDelete", item);
+            $scope.$emit("popupConfirmModal", {
+                modal: {
+                    title: '删除物料',
+                    text1:'确定删除',
+                    text2:[item.name + ' x ' + item.quantity + item.measurement_text].join(""),
+                }, 
+                submit: () => {this.delete()}
+            });
         },
         delete(){
             if (!this.deleteItem) return;
@@ -288,16 +323,21 @@ angular.module('ctrl', [])
     })
     $scope.stock.initStockList();
     $scope.$emit("sidebar", null, true);
-
 })
-.controller('flowinCtrl', ($scope, scan, Flow) => {
-    $scope.flow = new Flow($scope, "flow-in", scan);
+.controller('flowinCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
+    $scope.flow = new Flow($scope, $state, $timeout, scan, {
+        method: 'flow-in', 
+        wid: getCurWid(),
+    });
     $scope.flow.initFlowList();
     $scope.flowText = "入库";   
     $scope.$emit("sidebar", null, true);
 })
-.controller('flowoutCtrl', ($scope, scan, Flow) => {
-    $scope.flow = new Flow($scope, "flow-out", scan);
+.controller('flowoutCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
+    $scope.flow = new Flow($scope, $state, $timeout, scan, {
+        method: "flow-out",
+        wid: getCurWid(),
+    });
     $scope.flow.initFlowList();
     $scope.flowText = "出库";
     $scope.$emit("sidebar", null, true);
@@ -376,15 +416,19 @@ function($scope, $timeout, $base64, admin, translate){
         })
     }
 })
-.controller('deleteModalCtrl', function($scope){
-    $scope.$on("syncDeleteItem", (event, data, type) => {
-        this.modal = {
-            title: '删除物料',
-            confirmText1: [data.name, ' x ', data.quantity + ' ?'].join('')
-        }
+.controller('confirmModalCtrl', function($scope){
+    $scope.$on("resolveConfirm", (event, data) => {
+        this.modal = data.modal;
+        this.submit = data.submit
     })   
-    this.delete = () => {
-        $scope.$emit("confrimDelete")
+
+})
+.controller('uploadModalCtrl', function($scope){
+    this.submit = () => {
+        $scope.$emit("confirmUpload", this.input)
     }
+    $scope.$on("showModalError", (event, input) => {
+        this.error = input;
+    })
 })
 .name;

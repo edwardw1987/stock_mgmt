@@ -2,7 +2,7 @@
 * @Author: wangwh8
 * @Date:   2018-05-24 12:46:46
 * @Last Modified by:   edward
-* @Last Modified time: 2018-06-16 16:27:08
+* @Last Modified time: 2018-06-17 16:31:49
 */
 /* layout */
 .submit-btn {
@@ -150,10 +150,10 @@ td.quantity i{
     }
 }
 .sidebar-open {
-    transition: all .5s;
+    transition: all .3s;
     transform: translate3d(20%, 0, 0);
 }
 .sidebar-close {
-    transition: all .5s;
+    transition: all .3s;
     transform: translate3d(0, 0, 0);
 }

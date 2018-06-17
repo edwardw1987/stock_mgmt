@@ -69,11 +69,9 @@
                 </a>
                 <button
                   ng-if="item.noFlows"
-                  href="#"
                   class="btn btn-danger"
                   data-toggle="modal"
-                  data-target="#delete-modal"
-                  title="delete"
+                  data-target="#confirm-modal"
                   ng-click="stock.popupDelete(item)"
                   >删除
                 </button>

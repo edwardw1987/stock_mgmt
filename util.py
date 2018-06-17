@@ -273,6 +273,16 @@ class SerialList(list):
                 start += 1
         super(SerialList, self).append(e)
 
+def unique(arr):
+    seen = set()
+    ret = []
+    for i in arr:
+        if i in seen:
+            continue
+        ret.append(i)
+        seen.add(i)
+    return ret
+
 def main():
 
     print string_cooker.decode("MTExMQtt=")

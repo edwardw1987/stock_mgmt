@@ -7,7 +7,7 @@ var webpack = require('webpack-stream');
 gulp.task('default', ['watch'], function(){
   console.log('start...');
 });
-gulp.task('babel', function(){
+gulp.task('babel', ["lib",], function(){
   return gulp.src("./src/*.js")
     .pipe(webpack(require("./webpack.config.js")))
     .pipe(babel({
@@ -19,7 +19,16 @@ gulp.task('babel', function(){
     // .pipe(concat('bundle.min.js'))
     .pipe(gulp.dest(__dirname));
 });
-
+gulp.task("lib", () => {
+  return gulp.src([
+    "./lib/angular.min.js",
+    "./lib/*.js"
+    ])
+    // .pipe(gulp.dest(__dirname))
+    // .pipe(uglify())
+    .pipe(concat('lib.js'))
+    .pipe(gulp.dest(__dirname));
+})
 gulp.task('sso', function(){
   return gulp.src(['src/sso.js'])
     .pipe(uglify())

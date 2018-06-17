@@ -1,7 +1,7 @@
 <form ng-submit="stock.save(myForm.$valid)" name="myForm">
   <div class="form-layout">
     <label>物料名称</label>
-    <input type="text" class="form-control" placeholder="物料名称" ng-model="stock.data.name" required="">
+    <input type="text" class="form-control" placeholder="物料名称" ng-model="stock.data.name" required="" ng-focus="stock.focus">
     <div class="info-group">
       <label>条形码</label>
       <span class="toggle-info">

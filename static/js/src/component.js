@@ -6,7 +6,9 @@ import passwordFormHtml from "./partials/settings_password.html"
 import settingsHtml from "./partials/settings.html"
 import sidebarHtml from "./partials/sidebar.html"
 import warehouseFormHtml from "./partials/warehouse_form.html"
-import deleteModalHtml from "./partials/delete_modal.html"
+import confirmModalHtml from "./partials/confirm_modal.html"
+import uploadModalHtml from "./partials/upload_modal.html"
+
 
 export default 
 angular.module('component', [])
@@ -44,8 +46,13 @@ angular.module('component', [])
   template: warehouseFormHtml,
   controller: 'warehouseFormCtrl'
 })
-.component('deleteModal', {
-  template: deleteModalHtml,
-  controller: 'deleteModalCtrl',
+.component('confirmModal', {
+  template: confirmModalHtml,
+  controller: 'confirmModalCtrl',
 })
+.component('uploadModal', {
+  template: uploadModalHtml,
+  controller: 'uploadModalCtrl',
+})
+
 .name;

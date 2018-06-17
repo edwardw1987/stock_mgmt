@@ -1,15 +1,11 @@
 module.exports = {
   entry: {
     app: [
-    './angular.min.js', 
-    './angular-animate.min.js',
-    "./angular-ui-router.js",
-    './angular-base64.min.js',
-    './src/main.js'],
-  // test: 'test/test.js',
+      './src/main.js'
+    ],
   },
   output: {
-    filename: 'bundle.min.js',
+    filename: '[name].js',
   },
   module: {
     rules: [{

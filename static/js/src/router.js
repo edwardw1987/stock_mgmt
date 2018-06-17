@@ -2,18 +2,19 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   edward
- * @Last Modified time: 2018-06-16 19:37:21
+ * @Last Modified time: 2018-06-17 12:11:47
  */
 
 'use strict';
 export default 
 angular.module('router', [])
-.config(['$stateProvider', '$urlRouterProvider', '$locationProvider', 
-    function($stateProvider, $urlRouterProvider, $locationProvider){
+.config(['$stateProvider', '$urlServiceProvider', '$locationProvider', 
+    function($stateProvider, $urlServiceProvider, $locationProvider){
     //
     // $locationProvider.html5Mode(true)
     // For any unmatched url, redirect to /state1
-    $urlRouterProvider.otherwise("/stock");
+    // $urlRouterProvider.otherwise({state: 'stock'});
+    $urlServiceProvider.rules.otherwise({ state: 'stock' });
     //
     // Now set up the states
 

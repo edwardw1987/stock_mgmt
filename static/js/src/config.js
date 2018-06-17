@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   edward
- * @Last Modified time: 2018-06-17 10:33:00
+ * @Last Modified time: 2018-06-17 10:52:39
  */
 
 'use strict';
@@ -48,4 +48,16 @@ angular.module('config', [])
    //  }).then(function(){
    //      console.log('end');
    //  });
-    
+
+
+
+  //    $scope.reload = function () {
+  //   $http.get('http://localhost:3000/api/todos').
+  //       success(function (data) {
+  //         $scope.todos = data.todos;
+  //     });
+
+  //   $timeout(function(){
+  //     $scope.reload();
+  //   },30000)
+  // };

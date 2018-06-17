@@ -102,8 +102,12 @@ class FlowMixin(object):
     def get_quantity_field(self, method):
         return {"flow-in": "flowin_quantity", "flow-out": "flowout_quantity"}[method]
 
-    def query_created_flow(self, barcode, method):
-        filters = (Stock.barcode == barcode, Flow.flowed == False)
+    def query_created_flow(self, warehouse, barcode, method):
+        filters = (
+            Stock.warehouse_id == warehouse,
+            Stock.barcode == barcode, 
+            Flow.flowed == False
+        )
         if method == "flow-in":
             filters += (Flow.flowin_quantity > 0, Flow.flowout_quantity == 0)
         elif method == "flow-out":
@@ -187,15 +191,19 @@ class ApiFlow(MethodView, FlowMixin):
         elif action == "commit":
             ret = self.on_commit_flow(jd)
         elif action == "create":
-            stock = Stock.query.filter_by(barcode=jd["barcode"]).first()
+            stock = Stock.query.filter_by(
+                barcode=jd["barcode"],
+                warehouse_id=jd["warehouse_id"]
+                ).first()
             if not stock:
-                return jsonify({"success": False})
+                return jsonify({"success": False, "error": {"text": jd["barcode"]}})
             quantityField = self.get_quantity_field(jd["method"])
             createInfo = {
                 "stock_id": stock.id,
                 quantityField: 1
             }
-            created_flow = self.query_created_flow(jd["barcode"], jd["method"])
+            created_flow = self.query_created_flow(
+                jd["warehouse_id"], jd["barcode"], jd["method"])
             if created_flow:
                 created_flow.update({quantityField: created_flow.to_dict()[quantityField] + 1})
                 ret["flow"] = created_flow.to_dict()
@@ -204,30 +212,38 @@ class ApiFlow(MethodView, FlowMixin):
                 ret["flow"] = f.to_dict()
         return jsonify(ret)
 
+
 class ApiFlowBatch(MethodView, FlowMixin):
     decorators = [login_required]
 
+    def getNoneStockBarcode(self, jd):
+        for barcode in util.unique(jd["barcodeLines"]):
+            stock = Stock.query.filter_by(
+                barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
+            if not stock:
+                return barcode
+
     def post(self):
         jd = request.get_json()
-        ret = {"success": 0, "total": len(jd["barcodeLines"]), "failedBarcodes": []}
+        ret = {"success": 0, "total": len(jd["barcodeLines"])}
+        noneStockBarcode = self.getNoneStockBarcode(jd)
+        if noneStockBarcode:
+            ret["noneStockBarcode"] = noneStockBarcode
+            return jsonify(ret)
         for barcode, count in Counter(jd["barcodeLines"]).items():
-            stock = Stock.query.filter_by(barcode=barcode).first()
-            if not stock:
-                ret["failedBarcodes"].append(barcode)
-                continue
+            stock = Stock.query.filter_by(
+                barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
             quantityField = self.get_quantity_field(jd["method"])
             createInfo = {
                 "stock_id": stock.id,
                 quantityField: count
             }
-            created_flow = self.query_created_flow(barcode, jd["method"])
+            created_flow = self.query_created_flow(jd["warehouse_id"], barcode, jd["method"])
             if created_flow:
                 created_flow.update({quantityField: created_flow.to_dict()[quantityField] + count})
             else:
                 f = Flow.create(createInfo)
             ret["success"] += count
-        # if ret["failedBarcodes"]:
-        #     flash("".join("<li>%s</li>" % i for i in ret["failedBarcodes"]), category="error")
         return jsonify(ret)
 
 class ApiStock(MethodView):
@@ -253,14 +269,15 @@ class ApiStock(MethodView):
         if stock_id:
             stock = Stock.query.get(stock_id)
             return self.response_detail(stock)
-        if not warehouse_id:
-            abort(404)
+        # if not warehouse_id:
+        #     abort(404)
+        filters = {"warehouse_id": warehouse_id} if warehouse_id else {}
         if barcode:
-            stock = Stock.query.filter_by(
-                barcode=barcode, warehouse_id=warehouse_id).first()
+            filters["barcode"] = barcode
+            stock = Stock.query.filter_by(**filters).first()
             return self.response_detail(stock)
         ret["stockList"] = [self.handle_stock(i) for i in \
-            Stock.query.filter_by(warehouse_id=warehouse_id).order_by(Stock.id.desc())]
+            Stock.query.filter_by(**filters).order_by(Stock.id.desc())]
         # handle stock list
         return jsonify(ret)
 

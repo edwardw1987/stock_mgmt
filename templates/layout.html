@@ -26,7 +26,8 @@
   <div id="offcanvas" ng-class="{true: 'sidebar-open', false: 'sidebar-close'}[$ctrl.sidebar.open]">
     {% block main %}{% endblock %}
   </div>
-  <delete-modal></delete-modal>
+  <confirm-modal></confirm-modal>
+  <upload-modal></upload-modal>
 </div>
 <script>
     $(function(){

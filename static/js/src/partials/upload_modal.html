@@ -1,0 +1,41 @@
+  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true" id="upload-in-batch-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title text-center">
+            <span>批量上传</span>
+          </h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-inline" ng-submit="$ctrl.submit()">
+          <div class="row">
+            <div class="col-md-5 col-xm-12">
+              <div class="alert alert-info">
+                <p><b>批量上传条形码</b></p>
+                <br>
+                温馨提示：<br>
+                1.鼠标点击条形码输入框<br>
+                2.插上USB接收器<br>
+                3.用扫码抢发送扫码结果<br>
+                3.点击【确认】按钮<br>
+              </div>
+              <div class="alert alert-danger" ng-if="$ctrl.error">
+                错误条形码: <br>
+                [[ $ctrl.error.text ]]
+              </div>
+            </div>
+            <div class="col-md-7 col-xm-12">                  
+              <textarea ng-model="$ctrl.input" id="textarea" required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="btn-group">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="submit" class="btn btn-danger">确认</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
