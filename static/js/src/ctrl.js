@@ -112,6 +112,7 @@ angular.module('ctrl', [])
                     title:'删除物料',
                     text1:'确定删除',
                     text2:[item.name + ' x ' + item.flowQuantity + item.measurement_text].join(""),
+                    submitBtnText: '删除',
                 }, 
                 submit: () => {this.delete()}
             });
@@ -212,6 +213,11 @@ angular.module('ctrl', [])
             })
             return ret;
         },
+        getCheckedItems(){
+            return this.stockList.filter((e) => {
+                return e.checked
+            })
+        },
         hasCheckedItem(){
             let ret = false;
             this.stockList.forEach((stock) => {
@@ -291,9 +297,66 @@ angular.module('ctrl', [])
                     title: '删除物料',
                     text1:'确定删除',
                     text2:[item.name + ' x ' + item.quantity + item.measurement_text].join(""),
+                    submitBtnText: '删除',
                 }, 
                 submit: () => {this.delete()}
             });
+        },
+        stockin(item){
+            scan.newFlow({
+                warehouse_id: item.warehouse_id,
+                method: 'flow-in',
+                barcode: item.barcode,
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go('flowin');
+                }else{
+                    alert('stockin error')
+                }
+            })
+        },
+        stockout(item){
+            scan.newFlow({
+                warehouse_id: item.warehouse_id,
+                method: 'flow-out',
+                barcode: item.barcode,
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go('flowout');
+                }else{
+                    alert('stockin error')
+                }
+            })
+        },
+        stockinAll(){
+            let items = this.getCheckedItems()
+            if (items.length == 0) return;
+            scan.newFlowBatch({
+                warehouse_id: this.warehouse_id,
+                method: 'flow-in',
+                barcodeLines: items.map((e) => {return e.barcode})
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go("flowin")
+                }else{
+                    alert('stockinAll error')
+                }
+            })
+        },
+        stockoutAll(){
+            let items = this.getCheckedItems()
+            if (items.length == 0) return;
+            scan.newFlowBatch({
+                warehouse_id: this.warehouse_id,
+                method: 'flow-out',
+                barcodeLines: items.map((e) => {return e.barcode})
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go("flowout")
+                }else{
+                    alert('stockoutAll error')
+                }
+            })
         },
         delete(){
             if (!this.deleteItem) return;
@@ -344,14 +407,10 @@ angular.module('ctrl', [])
     $scope.$emit("sidebar", null, true);
 })
 .controller('stockFlowsCtrl', function($scope, $stateParams, scan){
-    $scope.curStock = null;
     scan.listFlow({stockid: $stateParams.id}).then((resp) => {
         $scope.flowList = resp.data.flowList;
         $scope.stock = resp.data.stock;
     })
-    $scope.goBack = ()=>{
-        window.history.back();
-    }
     $scope.$emit("sidebar", false, false);
 })
 .controller('changepasswordCtrl', 

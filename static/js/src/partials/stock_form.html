@@ -1,4 +1,4 @@
-<form ng-submit="stock.save(myForm.$valid)" name="myForm">
+<form ng-submit="stock.save(myForm.$valid)" name="stockForm">
   <div class="form-layout">
     <label>物料名称</label>
     <input type="text" class="form-control" placeholder="物料名称" ng-model="stock.data.name" required="" ng-focus="stock.focus">
@@ -24,6 +24,6 @@
       <option value=""></option>
       <option ng-repeat="(key, value) in stock.mOptions" ng-value="value">[[ key ]]</option>
     </select>
-    <button class="btn btn-primary submit-btn">保存</button>
+    <button class="btn btn-primary submit-btn" ng-disabled="stockForm.$invalid">保存</button>
   </div>
 </form>

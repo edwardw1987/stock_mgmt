@@ -8,7 +8,7 @@
           </h4>
       </div>
       <div class="modal-body">
-        <form class="form-inline" ng-submit="$ctrl.submit()">
+        <form class="form-inline" name="uploadForm" ng-submit="$ctrl.submit()">
           <div class="row">
             <div class="col-md-5 col-xm-12">
               <div class="alert alert-info">
@@ -32,7 +32,7 @@
           <div class="modal-footer">
             <div class="btn-group">
               <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-              <button type="submit" class="btn btn-danger">确认</button>
+              <button type="submit" class="btn btn-danger" ng-disabled="uploadForm.$invalid">确认</button>
             </div>
           </div>
         </form>

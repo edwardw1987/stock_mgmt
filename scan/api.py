@@ -129,7 +129,7 @@ class FlowMixin(object):
                 barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
             if not stock:
                 return {"title": "条形码不存在", "content": barcode}
-            if quantityField == "flowout_quantity" and not stock.quantity:
+            if jd["method"] == "flow-out" and not stock.quantity:
                 return {
                     "title": "库存[%s]数量为0" % stock.name, 
                     "content": "条形码:%s" % (barcode)
@@ -220,7 +220,7 @@ class ApiFlow(MethodView, FlowMixin):
                 return jsonify({"success": False, 
                     "error": {"title": "条形码不存在", "text": jd["barcode"]}})
             quantityField = self.get_quantity_field(jd["method"])
-            if quantityField == "flowout_quantity" and not stock.quantity:
+            if jd["method"] == "flow-out" and not stock.quantity:
                 # 出库操作，但当前库存为空
                 return jsonify({"success": False, 
                     "error": {
@@ -248,11 +248,12 @@ class ApiFlowBatch(MethodView, FlowMixin):
 
     def post(self):
         jd = request.get_json()
-        ret = {"success": 0, "total": len(jd["barcodeLines"])}
+        ret = {"success": True, "total": len(jd["barcodeLines"])}
         noneStockBarcode = self.get_none_stock_barcode(jd)
         quantityField = self.get_quantity_field(jd["method"])
         if noneStockBarcode:
             ret["noneStockBarcode"] = noneStockBarcode
+            ret["success"] = False
             return jsonify(ret)
         for barcode, count in Counter(jd["barcodeLines"]).items():
             stock = Stock.query.filter_by(
@@ -266,7 +267,6 @@ class ApiFlowBatch(MethodView, FlowMixin):
                 created_flow.update({quantityField: created_flow.to_dict()[quantityField] + count})
             else:
                 f = Flow.create(createInfo)
-            ret["success"] += count
         return jsonify(ret)
 
 class ApiStock(MethodView):

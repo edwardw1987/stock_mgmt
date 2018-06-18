@@ -54,5 +54,4 @@ angular.module('component', [])
   template: uploadModalHtml,
   controller: 'uploadModalCtrl',
 })
-
 .name;

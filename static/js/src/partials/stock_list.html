@@ -44,7 +44,7 @@
               <th><input type="checkbox" ng-checked="item.checked" 
                 ng-model="item.checked"
                 ng-change="stock.onCheckChange(item)"></th>
-              <td>[[ item.name  ]]</td>
+              <td><a ui-sref="stockFlows({id:item.id})">[[ item.name  ]]</a></td>
               <td>[[ item.barcode ]]</td>
               <td>[[ item.unitprice | currency: "&#165;&nbsp;" ]]</td>
               <td>[[ item.quantity + item.measurement_text ]]</td>
@@ -54,19 +54,18 @@
                 <span><i class="fa fa-fw" ng-class="{true: 'fa-check-circle text-success', false: ' fa-times-circle text-danger'}[item.quantity > 0]"></i>出库</span>
               </td>
               <td>
-                <a ui-sref="stockFlows({id: item.id})" 
-                class="btn btn-info" ui-sref-active="active">详情</a>
-                <a
-                  ui-sref="stockIn({id: item.id})" 
+                <a ui-sref="stockFlows({id: item.id})" class="btn btn-info">详情</a>
+                <button
+                  ng-click="stock.stockin(item)"
                   class="btn btn-primary"
                   >入库
-                </a>
-                <a
-                  ui-sref="stockOut({id: item.id})" 
+                </button>
+                <button
+                  ng-click="stock.stockout(item)"
                   ng-if="item.quantity > 0"
                   class="btn btn-warning"
                   >出库
-                </a>
+                </button>
                 <button
                   ng-if="item.noFlows"
                   class="btn btn-danger"
@@ -78,26 +77,24 @@
               </td>
             </tr>
             <tr>
-            <td colspan="9" ng-show="stock.show">
-              <a
-                ui-sref="stockIn()" 
-                class="btn btn-primary"
-                ng-disabled="!stock.hasCheckedItem()"
-                >全部入库
-              </a>
-              <a
-                ui-sref="stockOut()" 
-                ng-disabled="!stock.checkedFlowoutAllowed()"
-                class="btn btn-warning"
-                >全部出库
-              </a>        
-            </td>            
             </tr>
         </tbody>
       </table>
       <p ng-show="stock.show && stock.stockList.length == 0" ng-cloak> 暂无数据 </p>
-      <div class="pull-right">
-      </div>
+      <div ng-show="stock.show">
+        <button
+          ng-click="stock.stockinAll()"
+          ng-disabled="!stock.hasCheckedItem()"
+          class="btn btn-primary"
+          >全部入库
+        </button>
+        <button
+          ng-click="stock.stockoutAll()"
+          ng-disabled="!stock.checkedFlowoutAllowed()"
+          class="btn btn-warning"
+          >全部出库
+        </button>        
+      </div>            
     </div>
     </div>
   </div>
