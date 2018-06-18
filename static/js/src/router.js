@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   edward
- * @Last Modified time: 2018-06-17 12:11:47
+ * @Last Modified time: 2018-06-18 14:42:41
  */
 
 'use strict';
@@ -22,22 +22,22 @@ angular.module('router', [])
     .state({
         name: 'stock',
         url: '/stock',
-        template: '<stock-list></stock-list>',
+        component: 'stockList',
     })
     .state({
         name:'stockFlows',
         url:'/stock/{id}/flows',
-        template: "<stock-flows></stock-flows>",
+        component: 'stockFlows',
     })
     .state({
         name: 'flowin',
         url: '/flow-in',
-        template: '<flowin-list></flowin-list>',
+        component: 'flowinList',
     })
     .state({
         name: 'flowout',
         url: '/flow-out',
-        template: '<flowout-list></flowout-list>',
+        component: 'flowoutList',
     })
  
     var stockInState = {

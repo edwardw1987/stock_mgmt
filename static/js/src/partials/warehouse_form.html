@@ -8,8 +8,8 @@
             <div class="form-layout">
                 <label>仓库名称</label>
                 <input type="text" class="form-control" placeholder="仓库名称" required="" autofocus="" ng-model="$ctrl.warehouse.name">
-                <label ng-class="{error: 'text-danger', info: 'text-success'}[$ctrl.log.level]" ng-if="$ctrl.log">[[ $ctrl.log.text + ", " + $ctrl.countdown + "秒后刷新..."]]</label>
-                <button class="btn btn-primary submit-btn" ng-disabled="$ctrl.submitDisabled">创建</button>
+                <label ng-class="{error: 'text-danger', info: 'text-success'}[$ctrl.log.level]" ng-if="$ctrl.log">[[ $ctrl.getLogText() ]]</label>
+                <button class="btn btn-primary submit-btn" ng-disabled="$ctrl.submitDisabled || warehouseForm.$invalid">创建</button>
             </div>
             </form>
         </div>

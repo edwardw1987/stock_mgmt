@@ -1,11 +1,13 @@
+{% set title = current.name %}
 {% extends "base.html" %}
 
 {% block layout %}
 {% include "nav.html"%}
+
 <div class="container-fluid" ng-controller="layoutCtrl as $ctrl" ng-app="warehouse">
   <div class="row">
     <div class="col-md-12 col-xs-12" ng-cloak>  
-    <h3 class="title" id="page-header"></h3>        
+    <h3 class="title" id="page-header">{{ current.name }}</h3>
       <ul class="nav nav-tabs">
         <li id="tab-stock" role="presentation" ui-sref-active="active">
           <a ui-sref="stock">库存</a></li>
@@ -15,8 +17,8 @@
           <a ui-sref="flowout">扫码出库</a></li>
       </ul>
       <ul class="nav nav-tabs">
-        <li role="presentation" ng-click="$ctrl.toggleSidebar()" ng-show="$ctrl.sidebar.show">
-          <a href="javascript:;">
+        <li role="presentation" ng-show="$ctrl.sidebar.show">
+          <a href="javascript:;" ng-click="$ctrl.toggleSidebar()">
             <i class="fa fa-fw fa-bars"></i>
           </a>
         </li>
@@ -34,7 +36,6 @@
         $("body").on("click", ".toggle-info", function(){
             $(this).parent().children(".alert").slideToggle();
         })
-        $("#page-header").text($('[name="wname"]').val());
     })
 </script>
 {% endblock %}

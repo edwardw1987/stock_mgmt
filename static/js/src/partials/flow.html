@@ -32,7 +32,7 @@
   </div>
   <div class="panel panel-danger" ng-if="flow.error" ng-cloak>
     <div class="panel-heading">
-      <label>非库存条形码, 入库失败</label>
+      <label>[[ flow.error.title ]]</label>
     </div>
     <div class="panel-body">
       <p class="text-danger">
@@ -72,7 +72,7 @@
               <th>物料名称</th>
               <th>条形码</th>
               <th>成本单价(元)</th>
-              <th>历史库存</th>
+              <th>当前库存</th>
               <th>[[ flowText ]]数量</th>
               <th>[[ flowText ]]总价(元)</th>
               <th>更新时间</th>
@@ -86,18 +86,19 @@
               <td><a ui-sref="stockFlows({id: item.stock_id})">[[ item.name ]]</a></td>
               <td>[[ item.barcode]]</td>
               <td>[[ item.unitprice | currency: "&#165;"]]</td>
-              <td>[[ item.flowed_stock_quantity? 
-                     item.flowed_stock_quantity + item.measurement_text
-                     :'无' ]]</td>
+              <td>[[ item.quantity + item.measurement_text ]]</td>
               <td ng-if="item.flowed" class="quantity" 
-              ng-class="{true: 'text-success', false: 'text-danger'}[isflowin]" ng-init="expression">
+              ng-class="{true: 'text-success', false: 'text-danger'}[isflowin]">
                 <i>
                 [[ {true: '+' + item.flowin_quantity, false: '-' + item.flowout_quantity}[isflowin] ]]
                 </i>
               </td>
               <td ng-if="!item.flowed">
-                <input class="form-control" type="number" 
-                ng-model="item.flowQuantity" max="999" min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')"></td>
+                <input ng-if="isflowin" class="form-control" type="number" 
+                ng-model="item.flowQuantity" max="999" min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')">
+                <input ng-if="!isflowin" class="form-control" type="number" 
+                ng-model="item.flowQuantity" max="[[item.quantity]]" min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')">
+              </td>
               <td>[[ item.flowQuantity * item.unitprice | currency: "&#165;" ]]</td>
               <td>[[ item.modified ]]</td>
               <td>[[ item.flowed? '已提交': "未提交"]]</td>

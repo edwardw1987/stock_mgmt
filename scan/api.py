@@ -1,3 +1,4 @@
+# coding:utf-8
 from flask import render_template, request, Blueprint, jsonify, abort, url_for
 from flask import redirect
 from flask.views import MethodView
@@ -91,12 +92,14 @@ class FlowMixin(object):
             ret.append(one)
         return ret
 
-    def query_flow_by_method(self, method):
+    def query_flow_by_method(self, method, warehouse=None):
         filters = ()
         if method == "flow-in":
             filters = (Flow.flowin_quantity > 0,)
         elif method == "flow-out":
             filters = (Flow.flowout_quantity > 0,)
+        if warehouse:
+            filters += (Stock.warehouse_id == warehouse,)
         return self.query_flow(filters, method)
 
     def get_quantity_field(self, method):
@@ -115,6 +118,23 @@ class FlowMixin(object):
         return db.session.query(Flow).join(
             Stock, Stock.id == Flow.stock_id).filter(*filters).first()
 
+    def get_none_stock_barcode(self, jd):
+        """
+        1. [入库]和[出库]操作，条形码不存在
+        2. [出库]操作,条形码对应得库存数量为0
+        """
+        quantityField = self.get_quantity_field(jd["method"])
+        for barcode in util.unique(jd["barcodeLines"]):
+            stock = Stock.query.filter_by(
+                barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
+            if not stock:
+                return {"title": "条形码不存在", "content": barcode}
+            if quantityField == "flowout_quantity" and not stock.quantity:
+                return {
+                    "title": "库存[%s]数量为0" % stock.name, 
+                    "content": "条形码:%s" % (barcode)
+                }
+
 
 @app.route("/stock/input", methods=["POST"])
 def stock_input():
@@ -131,10 +151,11 @@ class ApiFlow(MethodView, FlowMixin):
     def get(self):
         method = util.args_get("method")
         stockid = util.args_get("stockid")
+        wid = util.args_get("wid")
         stock = None
         flows = [] 
         if method:
-            flows = self.query_flow_by_method(method)
+            flows = self.query_flow_by_method(method, warehouse=wid)
         elif stockid:
             flows = self.query_flow_by_stock(stockid)
             stock = Stock.query.get(stockid)
@@ -196,8 +217,17 @@ class ApiFlow(MethodView, FlowMixin):
                 warehouse_id=jd["warehouse_id"]
                 ).first()
             if not stock:
-                return jsonify({"success": False, "error": {"text": jd["barcode"]}})
+                return jsonify({"success": False, 
+                    "error": {"title": "条形码不存在", "text": jd["barcode"]}})
             quantityField = self.get_quantity_field(jd["method"])
+            if quantityField == "flowout_quantity" and not stock.quantity:
+                # 出库操作，但当前库存为空
+                return jsonify({"success": False, 
+                    "error": {
+                        "title": "库存[%s]数量为0" % stock.name,
+                        "text": "条形码：%s" % (jd["barcode"])
+                        }
+                    })
             createInfo = {
                 "stock_id": stock.id,
                 quantityField: 1
@@ -216,24 +246,17 @@ class ApiFlow(MethodView, FlowMixin):
 class ApiFlowBatch(MethodView, FlowMixin):
     decorators = [login_required]
 
-    def getNoneStockBarcode(self, jd):
-        for barcode in util.unique(jd["barcodeLines"]):
-            stock = Stock.query.filter_by(
-                barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
-            if not stock:
-                return barcode
-
     def post(self):
         jd = request.get_json()
         ret = {"success": 0, "total": len(jd["barcodeLines"])}
-        noneStockBarcode = self.getNoneStockBarcode(jd)
+        noneStockBarcode = self.get_none_stock_barcode(jd)
+        quantityField = self.get_quantity_field(jd["method"])
         if noneStockBarcode:
             ret["noneStockBarcode"] = noneStockBarcode
             return jsonify(ret)
         for barcode, count in Counter(jd["barcodeLines"]).items():
             stock = Stock.query.filter_by(
                 barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
-            quantityField = self.get_quantity_field(jd["method"])
             createInfo = {
                 "stock_id": stock.id,
                 quantityField: count

@@ -37,7 +37,8 @@ angular.module('ctrl', [])
         },
         initFlowList(){
             this.show = false;
-            this.scan.listFlow({method: this.method}).then((resp) => {
+            this.scan.listFlow({
+                method: this.method, wid: data.wid}).then((resp) => {
                 this.flowList = resp.data.flowList;
                 this.show = true;
             })
@@ -98,7 +99,7 @@ angular.module('ctrl', [])
                 barcodeLines: input.split('\n').filter((e)=>{return e.trim();})
             }).then((resp) => {
                 if (resp.data.noneStockBarcode){
-                    $scope.$emit("error", {text: resp.data.noneStockBarcode})
+                    $scope.$emit("error", resp.data.noneStockBarcode)
                 }else{
                     window.location.reload();
                 }
@@ -393,8 +394,17 @@ function($scope, $timeout, $base64, admin, translate){
     let self = this;
     self.warehouse = {}
     self.log = null
-    self.countdown = 5;
+    self.countdown = 3;
     self.submitDisabled = false;
+    self.getLogText = () => {
+        let text;
+        if (self.log.level == "info"){
+            text = self.log.text + ", " + self.countdown + "秒后刷新...";
+        }else if(self.log.level == "error"){
+            text  =self.log.text
+        }
+        return text;
+    }
     self.onSubmitWarehouseForm = () => {
         scan.newWarehouse(self.warehouse).then((resp) => {
             self.log = null;
@@ -406,7 +416,7 @@ function($scope, $timeout, $base64, admin, translate){
                         self.countdown --;
                     })
                     if (self.countdown === 0){
-                        window.location.reload();
+                        window.location.href = "/"
                     }
                 }, 1000)
 
