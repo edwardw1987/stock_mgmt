@@ -161,6 +161,14 @@ angular.module('ctrl', [])
 .constant('getCurWid', function(){
     return angular.element('[name="wid"]').val();
 })
+.constant('stockNavItems', [
+    {text: "库存列表", state: 'stock.list'}, 
+    {text: "库存盘点", state: 'stock.stocktake'},
+])
+.constant('flowNavItems', [
+    {text: "扫码入库", state: 'flow.in'}, 
+    {text: "扫码出库", state: 'flow.out'},
+])
 .controller('layoutCtrl', function($scope){
     this.key = "_sidebarOpen"
     this.sidebar = {
@@ -187,8 +195,11 @@ angular.module('ctrl', [])
     $scope.$on("error", (event, input) => {
         $scope.$broadcast("showModalError", input)
     })
+    $scope.$on("setNavItems", (event, items) => {
+        this.navItems = items;
+    })
 })
-.controller('stockCtrl', function($scope, $timeout, $state, scan, getCurWid){
+.controller('stockCtrl', function($scope, $timeout, $state, scan, getCurWid, stockNavItems){
     $scope.stock = {
         warehouse_id: getCurWid(),
         duplicate: [],
@@ -387,8 +398,9 @@ angular.module('ctrl', [])
     })
     $scope.stock.initStockList();
     $scope.$emit("sidebar", null, true);
+    $scope.$emit("setNavItems", stockNavItems)
 })
-.controller('flowinCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
+.controller('flowinCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid, flowNavItems) => {
     $scope.flow = new Flow($scope, $state, $timeout, scan, {
         method: 'flow-in', 
         wid: getCurWid(),
@@ -396,6 +408,7 @@ angular.module('ctrl', [])
     $scope.flow.initFlowList();
     $scope.flowText = "入库";   
     $scope.$emit("sidebar", null, true);
+    $scope.$emit("setNavItems", flowNavItems)
 })
 .controller('flowoutCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
     $scope.flow = new Flow($scope, $state, $timeout, scan, {
@@ -499,5 +512,8 @@ function($scope, $timeout, $base64, admin, translate){
     $scope.$on("showModalError", (event, input) => {
         this.error = input;
     })
+})
+.controller('stocktakeCtrl', function($scope){
+
 })
 .name;

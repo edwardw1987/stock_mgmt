@@ -1,8 +1,8 @@
 /*
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
- * @Last Modified by:   edward
- * @Last Modified time: 2018-06-18 22:03:57
+ * @Last Modified by:   wangwh8
+ * @Last Modified time: 2018-06-19 16:56:40
  */
 
 'use strict';
@@ -22,7 +22,17 @@ angular.module('router', [])
     .state({
         name: 'stock',
         url: '/stock',
-        component: 'stockList',
+        redirectTo: {state: 'stock.list'},
+    })
+    .state({
+        name: 'stock.list',
+        url: '/list',
+        component: 'stockList'
+    })
+    .state({
+        name: 'stock.stocktake',
+        url: '/stocktake',
+        component: 'stocktake'
     })
     .state({
         name:'stockFlows',
@@ -30,13 +40,18 @@ angular.module('router', [])
         component: 'stockFlows',
     })
     .state({
-        name: 'flowin',
-        url: '/flow-in',
+        name: 'flow',
+        url: '/flow',
+        redirectTo: {state: 'flow.in'},
+    })
+    .state({
+        name: 'flow.in',
+        url: '/in',
         component: 'flowinList',
     })
     .state({
-        name: 'flowout',
-        url: '/flow-out',
+        name: 'flow.out',
+        url: '/out',
         component: 'flowoutList',
     })
 }])

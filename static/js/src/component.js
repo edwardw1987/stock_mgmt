@@ -8,6 +8,7 @@ import sidebarHtml from "./partials/sidebar.html"
 import warehouseFormHtml from "./partials/warehouse_form.html"
 import confirmModalHtml from "./partials/confirm_modal.html"
 import uploadModalHtml from "./partials/upload_modal.html"
+import stocktakeHtml from "./partials/stocktake.html"
 
 
 export default 
@@ -53,5 +54,9 @@ angular.module('component', [])
 .component('uploadModal', {
   template: uploadModalHtml,
   controller: 'uploadModalCtrl',
+})
+.component('stocktake', {
+  template: stocktakeHtml,
+  controller: 'stocktakeCtrl'
 })
 .name;
