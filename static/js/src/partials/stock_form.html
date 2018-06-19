@@ -1,14 +1,14 @@
-<form ng-submit="stock.save(stockForm.$valid)" name="stockForm">
+<form ng-submit="$ctrl.save(stockForm.$valid)" name="stockForm">
   <div class="form-layout">
     <label>物料名称</label>
-    <input type="text" class="form-control" placeholder="物料名称" ng-model="stock.data.name" required="" ng-focus="stock.focus">
+    <input type="text" class="form-control" placeholder="物料名称" ng-model="$ctrl.data.name" required="" ng-focus="$ctrl.focus">
     <div class="info-group">
       <label>条形码</label>
       <span class="toggle-info">
         <i class="fa fa-info-circle fa-lg"></i>
       </span>
-      <div ng-cloak class="text-danger shake" ng-class="{'animated':stock.animate}" ng-show="stock.duplicate.length > 0">
-        <label>库存条形码[[ stock.duplicate[0] ]]已存在</label>
+      <div ng-cloak class="text-danger shake" ng-class="{'animated':$ctrl.animate}" ng-show="$ctrl.duplicate.length > 0">
+        <label>库存条形码[[ $ctrl.duplicate[0] ]]已存在</label>
       </div>
       <p class="alert alert-info" style="display: none;">
         温馨提示：<br>
@@ -16,13 +16,13 @@
         2.用扫码抢进行扫码
       </p>
     </div>
-    <input type="text" class="form-control" placeholder="条形码" ng-model="stock.data.barcode" required>
+    <input type="text" class="form-control" placeholder="条形码" ng-model="$ctrl.data.barcode" required>
     <label>成本单价(元)</label>
-    <input type="number" max="999" min="0.1" step="0.1" class="form-control" placeholder="成本单价" ng-model="stock.data.unitprice" required="">
+    <input type="number" max="999" min="0.1" step="0.1" class="form-control" placeholder="成本单价" ng-model="$ctrl.data.unitprice" required="">
     <label>度量单位</label>
-    <select id="select-unit" class="form-control" ng-model="stock.data.measurement" required="">
+    <select id="select-unit" class="form-control" ng-model="$ctrl.data.measurement" required="">
       <option value=""></option>
-      <option ng-repeat="(key, value) in stock.mOptions" ng-value="value">[[ key ]]</option>
+      <option ng-repeat="(key, value) in $ctrl.mOptions" ng-value="value">[[ key ]]</option>
     </select>
     <button class="btn btn-primary submit-btn" ng-disabled="stockForm.$invalid">保存</button>
   </div>

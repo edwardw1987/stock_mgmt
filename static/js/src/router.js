@@ -1,8 +1,8 @@
 /*
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
- * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-19 17:16:07
+ * @Last Modified by:   edward
+ * @Last Modified time: 2018-06-19 21:37:02
  */
 
 'use strict';
@@ -36,8 +36,8 @@ angular.module('router', [])
         component: 'stocktake'
     })
     .state({
-        name:'stockFlows',
-        url:'/stock/{id}/flows',
+        name:'stock.flows',
+        url:'/{id}/flows',
         component: 'stockFlows',
     })
     .state({

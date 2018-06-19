@@ -44,7 +44,7 @@
               <th><input type="checkbox" ng-checked="item.checked" 
                 ng-model="item.checked"
                 ng-change="stock.onCheckChange(item)"></th>
-              <td><a ui-sref="stockFlows({id:item.id})">[[ item.name  ]]</a></td>
+              <td><a ui-sref="stock.flows({id:item.id})">[[ item.name  ]]</a></td>
               <td>[[ item.barcode ]]</td>
               <td>[[ item.unitprice | currency: "&#165;&nbsp;" ]]</td>
               <td>[[ item.quantity + item.measurement_text ]]</td>
@@ -54,7 +54,7 @@
                 <span><i class="fa fa-fw" ng-class="{true: 'fa-check-circle text-success', false: ' fa-times-circle text-danger'}[item.quantity > 0]"></i>出库</span>
               </td>
               <td>
-                <a ui-sref="stockFlows({id: item.id})" class="btn btn-info">详情</a>
+                <a ui-sref="stock.flows({id: item.id})" class="btn btn-info">详情</a>
                 <button
                   ng-click="stock.stockin(item)"
                   class="btn btn-primary"

@@ -21,7 +21,7 @@
           <input type="text" class="form-control" placeholder="扫码或输入条形码" ng-model="flow.inputBarcode" required="" ng-keyup="flow.onBarcodeInput($event)" autofocus="true" ng-focus="true">
       </form>
       <button class="btn btn-primary submit-btn"
-        id="batch-upload-btn" 
+        ng-click="flow.popupUpload()" 
         data-toggle="modal"
         data-target="#upload-modal">
         批量上传
@@ -77,7 +77,7 @@
           <tbody>
             <tr ng-repeat="item in flow.flowList" ng-cloak ng-init="isflowin = item.flowQuantity == item.flowin_quantity">
               <td>[[ $index + 1 ]]</td>
-              <td><a ui-sref="stockFlows({id: item.stock_id})">[[ item.name ]]</a></td>
+              <td><a ui-sref="stock.flows({id: item.stock_id})">[[ item.name ]]</a></td>
               <td>[[ item.barcode]]</td>
               <td>[[ item.unitprice | currency: "&#165;"]]</td>
               <td>[[ item.quantity + item.measurement_text ]]</td>
@@ -87,13 +87,13 @@
                 [[ {true: '+' + item.flowin_quantity, false: '-' + item.flowout_quantity}[isflowin] ]]
                 </i>
               </td>
-              <td>[[ item.flowed_stock_quantity + item.measurement_text ]]</td>
               <td ng-if="!item.flowed">
                 <input ng-if="isflowin" class="form-control" type="number" 
                 ng-model="item.flowQuantity" max="999" min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')">
                 <input ng-if="!isflowin" class="form-control" type="number" 
                 ng-model="item.flowQuantity" max="[[item.quantity]]" min="1" step="1" ng-change="flow.onQuantityChange(item, '[[item.flowQuantity]]')">
               </td>
+              <td>[[ item.flowed_stock_quantity + item.measurement_text ]]</td>
               <td>[[ item.flowQuantity * item.unitprice | currency: "&#165;" ]]</td>
               <td>[[ item.modified ]]</td>
               <td>[[ item.flowed? '已提交': "未提交"]]</td>
