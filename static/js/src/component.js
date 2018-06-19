@@ -15,11 +15,11 @@ export default
 angular.module('component', [])
 .component('stockList', {
   template: stockListHtml,
-  controller: 'stockCtrl'
+  controller: 'stockListCtrl'
 })
 .component('stockForm', {
   template: stockFormHtml,
-  controller: 'stockCtrl'
+  controller: 'stockFormCtrl'
 })
 .component('stockFlows', {
   template: stockFlowsHtml,

@@ -161,14 +161,6 @@ angular.module('ctrl', [])
 .constant('getCurWid', function(){
     return angular.element('[name="wid"]').val();
 })
-.constant('stockNavItems', [
-    {text: "库存列表", state: 'stock.list'}, 
-    {text: "库存盘点", state: 'stock.stocktake'},
-])
-.constant('flowNavItems', [
-    {text: "扫码入库", state: 'flow.in'}, 
-    {text: "扫码出库", state: 'flow.out'},
-])
 .controller('layoutCtrl', function($scope){
     this.key = "_sidebarOpen"
     this.sidebar = {
@@ -199,7 +191,7 @@ angular.module('ctrl', [])
         this.navItems = items;
     })
 })
-.controller('stockCtrl', function($scope, $timeout, $state, scan, getCurWid, stockNavItems){
+.controller('stockListCtrl', function($scope, $timeout, $state, scan, getCurWid){
     $scope.stock = {
         warehouse_id: getCurWid(),
         duplicate: [],
@@ -398,9 +390,222 @@ angular.module('ctrl', [])
     })
     $scope.stock.initStockList();
     $scope.$emit("sidebar", null, true);
-    $scope.$emit("setNavItems", stockNavItems)
 })
-.controller('flowinCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid, flowNavItems) => {
+.controller('stockFormCtrl', function($scope, $timeout, $state, scan, getCurWid){
+    $scope.stock = {
+        warehouse_id: getCurWid(),
+        duplicate: [],
+        animate: false,
+        show: false,
+        data:{},
+        stockList: [],
+        mOptions: {},
+        searchText: '',
+        promise: null,
+        deleteItem: null,
+        checkAll: false,
+        flowoutAllDisabled: true,
+        checkedFlowoutAllowed(){
+            if (!this.hasCheckedItem()) return false;
+            let ret = true;
+            this.stockList.forEach((e) => {
+                if (e.checked && e.quantity <= 0){
+                    ret = false;
+                    return
+                }
+            })
+            return ret;
+        },
+        getCheckedItems(){
+            return this.stockList.filter((e) => {
+                return e.checked
+            })
+        },
+        hasCheckedItem(){
+            let ret = false;
+            this.stockList.forEach((stock) => {
+                if (stock.checked){
+                    ret = true;
+                    return
+                }
+            })
+            return ret;
+        },
+        onCheckAllChange(){
+            this.stockList.forEach((stock) => {
+                stock.checked = this.checkAll? true: false;
+            })
+        },
+        onCheckChange(item){
+            if (!item.checked){
+                this.checkAll = false;
+            }
+            let i = 1;
+            this.stockList.forEach((e) => {
+                i &= e.checked ? 1: 0;
+            })
+            if (i === 1){
+                this.checkAll = true;
+            }
+
+        },
+        onSearchTextChange(){
+            if (this.promise != null){
+                $timeout.cancel(this.promise);
+            }
+            if (this.searchText.trim().length < 1) return;
+            this.promise = $timeout(()=>{
+               console.log(this.searchText)
+            }, 500)
+        },
+        isDuplicate(){
+            this.animate = false;
+            return scan.queryStock({
+                barcode:this.data.barcode,
+                wid: this.warehouse_id,
+            }).then(function(resp){
+                console.log(resp.data)
+                if (resp.data.success){
+                    this.duplicate.push(this.data.barcode)
+                    return true
+                }else{
+                    this.duplicate = [];
+                    return false
+                }
+            }.bind(this))
+        },
+        save(formValid){
+            if(!formValid) return;
+            this.isDuplicate().then((isdup)=>{
+                if (isdup) {
+                    this.animate = true;
+                    return;
+                }
+                let newStock = Object.assign({}, this.data);
+                newStock.warehouse_id = this.warehouse_id;
+                scan.newStock(newStock).then(function(resp){
+                    if (resp.data.success){
+                        // window.location.reload();
+                        $state.reload()
+                    }else{
+                        alert("error on create")
+                    }
+                })
+            })
+        },
+        popupDelete(item){
+            this.deleteItem = item;
+            $scope.$emit("popupConfirmModal", {
+                modal: {
+                    title: '删除物料',
+                    text1:'确定删除',
+                    text2:[item.name + ' x ' + item.quantity + item.measurement_text].join(""),
+                    submitBtnText: '删除',
+                }, 
+                submit: () => {this.delete()}
+            });
+        },
+        stockin(item){
+            scan.newFlow({
+                warehouse_id: item.warehouse_id,
+                method: 'flow-in',
+                barcode: item.barcode,
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go('flowin');
+                }else{
+                    alert('stockin error')
+                }
+            })
+        },
+        stockout(item){
+            scan.newFlow({
+                warehouse_id: item.warehouse_id,
+                method: 'flow-out',
+                barcode: item.barcode,
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go('flowout');
+                }else{
+                    alert('stockin error')
+                }
+            })
+        },
+        stockinAll(){
+            let items = this.getCheckedItems()
+            if (items.length == 0) return;
+            scan.newFlowBatch({
+                warehouse_id: this.warehouse_id,
+                method: 'flow-in',
+                barcodeLines: items.map((e) => {return e.barcode})
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go("flowin")
+                }else{
+                    alert('stockinAll error')
+                }
+            })
+        },
+        stockoutAll(){
+            let items = this.getCheckedItems()
+            if (items.length == 0) return;
+            scan.newFlowBatch({
+                warehouse_id: this.warehouse_id,
+                method: 'flow-out',
+                barcodeLines: items.map((e) => {return e.barcode})
+            }).then((resp) => {
+                if (resp.data.success){
+                    $state.go("flowout")
+                }else{
+                    alert('stockoutAll error')
+                }
+            })
+        },
+        delete(){
+            if (!this.deleteItem) return;
+            scan.delStock(this.deleteItem.id).then(function(resp){
+                if (resp.data.success){
+                    window.location.reload();
+                }else{
+                    alert("error on delete")
+                }
+            })
+            return false;
+        },
+        initStockList(){
+            scan.listStock({wid: this.warehouse_id}).then((resp) => {
+                this.stockList = resp.data.stockList;
+                this.show = true;
+            })
+            scan.mOptions().then((resp) => {
+                this.mOptions = resp.data;
+            })
+        },
+        toggleSidebar(){
+            $scope.$emit("toggleSidebar");
+        }
+    };
+    $scope.$on("delete", () => {
+        $scope.stock.delete();
+    })
+    $scope.stock.initStockList();
+    $scope.$emit("sidebar", null, true);
+})
+.controller('stockCtrl', function($scope){
+    let stockNavItems = [
+        {text: "库存列表", state: 'stock.list'}, 
+        {text: "库存盘点", state: 'stock.stocktake'},
+    ];
+    $scope.$emit('setNavItems', stockNavItems);
+})
+.controller('flowCtrl', ($scope) => {
+    let flowNavItems = [
+        {text: "扫码入库", state: 'flow.in'}, 
+        {text: "扫码出库", state: 'flow.out'},
+    ];
+    $scope.$emit("setNavItems", flowNavItems)
+})
+.controller('flowinCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
     $scope.flow = new Flow($scope, $state, $timeout, scan, {
         method: 'flow-in', 
         wid: getCurWid(),
@@ -408,7 +613,6 @@ angular.module('ctrl', [])
     $scope.flow.initFlowList();
     $scope.flowText = "入库";   
     $scope.$emit("sidebar", null, true);
-    $scope.$emit("setNavItems", flowNavItems)
 })
 .controller('flowoutCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
     $scope.flow = new Flow($scope, $state, $timeout, scan, {

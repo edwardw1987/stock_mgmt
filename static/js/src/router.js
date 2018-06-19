@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-19 16:56:40
+ * @Last Modified time: 2018-06-19 17:16:07
  */
 
 'use strict';
@@ -22,6 +22,7 @@ angular.module('router', [])
     .state({
         name: 'stock',
         url: '/stock',
+        controller: 'stockCtrl',
         redirectTo: {state: 'stock.list'},
     })
     .state({
@@ -42,6 +43,7 @@ angular.module('router', [])
     .state({
         name: 'flow',
         url: '/flow',
+        controller: 'flowCtrl',
         redirectTo: {state: 'flow.in'},
     })
     .state({
