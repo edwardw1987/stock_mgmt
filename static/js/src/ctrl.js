@@ -513,6 +513,6 @@ function($scope, $timeout, $base64, admin, translate){
 })
 .controller('stocktakeCtrl', function($scope){
 
-    $scope.$emit("sidebar", false, false);
+    $scope.$emit("sidebar", null, true);
 })
 .name;

@@ -1,28 +1,26 @@
-<form class="form-inline" name="uploadForm" ng-submit="$ctrl.submit()">
-  <div class="row">
-    <div class="col-md-6 col-md-offset-2 col-xm-12">
-      <div class="alert alert-info">
-        <p><b>批量上传条形码</b></p>
-        <br>
-        温馨提示：<br>
-        1.鼠标点击条形码输入框<br>
-        2.插上USB接收器<br>
-        3.用扫码抢发送扫码结果<br>
-        3.点击【确认】按钮<br>
-      </div>
-      <div class="alert alert-danger" ng-if="$ctrl.error">
-        [[ $ctrl.error.title ]] <br>
-        [[ $ctrl.error.content ]]
-      </div>
-    </div>
-    <div class="col-md-6 col-md-offset-2 col-xm-12">                  
-      <textarea ng-model="$ctrl.input" class="textarea textarea-height-fixed" required autofocus=""></textarea>
-      <div class="modal-footer">
-        <div class="btn-group">
-          <a href="javascript:history.back();" class="btn btn-default">取消</a>
-          <button type="submit" class="btn btn-danger" ng-disabled="uploadForm.$invalid">确认</button>
-        </div>
-      </div>
-    </div>
+<div class="col-md-3 col-xs-12">
+  <div class="alert alert-info">
+    <p><b>批量上传条形码</b></p>
+    <br>
+    温馨提示：<br>
+    1.鼠标点击条形码输入框<br>
+    2.插上USB接收器<br>
+    3.用扫码抢发送扫码结果<br>
+    3.点击【确认】按钮<br>
   </div>
-</form>
+  <div class="alert alert-danger" ng-if="$ctrl.error">
+    [[ $ctrl.error.title ]] <br>
+    [[ $ctrl.error.content ]]
+  </div>
+</div>
+<div class="col-md-6 col-xs-12">
+  <form class="form-inline" name="uploadForm" ng-submit="$ctrl.submit()">
+        <textarea ng-model="$ctrl.input" class="textarea textarea-height-fixed" required autofocus=""></textarea>
+        <div class="modal-footer">
+          <div class="btn-group">
+            <a href="javascript:history.back();" class="btn btn-default">取消</a>
+            <button type="submit" class="btn btn-danger" ng-disabled="uploadForm.$invalid">确认</button>
+          </div>
+        </div>
+  </form>
+</div>
