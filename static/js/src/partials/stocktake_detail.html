@@ -1,0 +1,89 @@
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <div class="row">
+      <div class="col-md-2">
+        <h3 class="title"> 库存列表 </h3>
+      </div>
+      <div class="col-md-3 col-md-offset-7">
+        <div class="input-group search">
+           <input ng-model="stock.searchText" ng-change="stock.onSearchTextChange()" type="text" class="form-control" placeholder="物料名称 | 条形码">
+         </div><!-- /input-group -->                
+      </div>
+    </div>
+  </div>
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-layout">
+        <thead>
+          <tr ng-show="stock.show" ng-cloak>
+            <th></th>
+            <th><input type="checkbox" ng-model="stock.checkAll" ng-change="stock.onCheckAllChange()"></th>
+            <th>物料名称</th>
+            <th>条形码</th>
+            <th>成本单价(元)</th>
+            <th>数量</th>
+            <th>总价(元)</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in stock.stockList" ng-cloak>
+            <td>[[ $index + 1 ]]</td>
+            <th><input type="checkbox" ng-checked="item.checked" 
+              ng-model="item.checked"
+              ng-change="stock.onCheckChange(item)"></th>
+            <td><a ui-sref="stock.flows({id:item.id})">[[ item.name  ]]</a></td>
+            <td>[[ item.barcode ]]</td>
+            <td>[[ item.unitprice | currency: "&#165;&nbsp;" ]]</td>
+            <td>[[ item.quantity + item.measurement_text ]]</td>
+            <td>[[ item.unitprice * item.quantity | currency: "&#165;&nbsp;" ]]</td>
+            <td>
+              <span><i class="fa fa-fw fa-check-circle text-success"></i>入库</span>
+              <span><i class="fa fa-fw" ng-class="{true: 'fa-check-circle text-success', false: ' fa-times-circle text-danger'}[item.quantity > 0]"></i>出库</span>
+            </td>
+            <td>
+              <a ui-sref="stock.flows({id: item.id})" class="btn btn-info">详情</a>
+              <button
+                ng-click="stock.stockin(item)"
+                class="btn btn-primary"
+                >入库
+              </button>
+              <button
+                ng-click="stock.stockout(item)"
+                ng-if="item.quantity > 0"
+                class="btn btn-warning"
+                >出库
+              </button>
+              <button
+                ng-if="item.noFlows"
+                class="btn btn-danger"
+                data-toggle="modal"
+                data-target="#confirm-modal"
+                ng-click="stock.popupDelete(item)"
+                >删除
+              </button>
+            </td>
+          </tr>
+          <tr>
+          </tr>
+      </tbody>
+    </table>
+    <p ng-show="stock.show && stock.stockList.length == 0" ng-cloak> 暂无数据 </p>
+    <div ng-show="stock.show">
+      <button
+        ng-click="stock.stockinAll()"
+        ng-disabled="!stock.hasCheckedItem()"
+        class="btn btn-primary"
+        >全部入库
+      </button>
+      <button
+        ng-click="stock.stockoutAll()"
+        ng-disabled="!stock.checkedFlowoutAllowed()"
+        class="btn btn-warning"
+        >全部出库
+      </button> 
+    </div>            
+  </div>
+  </div>
+</div>

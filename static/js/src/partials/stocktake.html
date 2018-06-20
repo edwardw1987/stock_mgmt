@@ -1,1 +1,24 @@
-i am stocktake
+<div class="col-md-2 col-xs-12">
+    <div class="panel panel-info">
+      <div class="panel-heading">
+            <div class="text-center">
+            历史盘点
+            <a class="no-underline pull-right" ui-sref="stock.stocktake.new" ui-sref-active="active"> + 新建 </a>
+            </div>
+      </div>
+      <div class="panel-body">      
+        <ul class="nav-stocktake">
+            <li class="text-right">
+                
+            </a>
+            </li>
+            <li><a ui-sref="stock.stocktake.detail({id: 1})"> 111111111111 </a></li>
+            <li><a ui-sref="stock.stocktake.detail({id: 2})"> 22222222222 </a></li>
+            <li><a ui-sref="stock.stocktake.detail({id: 3})"> 333333333333 </a></li>
+        </ul>
+      </div>
+    </div>
+</div>
+<div class="col-md-10 col-xs-12">
+    <div ui-view></div>
+</div>

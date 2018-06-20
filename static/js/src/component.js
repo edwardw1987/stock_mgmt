@@ -9,6 +9,8 @@ import warehouseFormHtml from "./partials/warehouse_form.html"
 import confirmModalHtml from "./partials/confirm_modal.html"
 import uploadModalHtml from "./partials/upload_modal.html"
 import stocktakeHtml from "./partials/stocktake.html"
+import stocktakeNewHtml from "./partials/stocktake_new.html"
+import stocktakeDetailHtml from "./partials/stocktake_detail.html"
 
 
 export default 
@@ -58,5 +60,13 @@ angular.module('component', [])
 .component('stocktake', {
   template: stocktakeHtml,
   controller: 'stocktakeCtrl'
+})
+.component('stocktakeNew', {
+  template: stocktakeNewHtml,
+  controller: ''
+})
+.component('stocktakeDetail', {
+  template: stocktakeDetailHtml,
+  controller: ''
 })
 .name;

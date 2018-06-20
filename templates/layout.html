@@ -15,16 +15,18 @@
         <li id="tab-flowin" role="presentation" ui-sref-active="active">
           <a ui-sref="flow">扫码</a></li>
       </ul>
-      <ul class="sub-nav">
-        <li role="presentation" ng-show="$ctrl.sidebar.show">
-          <a href="javascript:;" ng-click="$ctrl.toggleSidebar()">
-            <i class="fa fa-fw fa-bars"></i>
-          </a>
-        </li>
-        <li ng-repeat="item in $ctrl.navItems">
-          <a ui-sref="[[ item.state ]]" ui-sref-active="active">[[ item.text ]]</a></li>
-      </ul>
     </div>
+  </div>
+  <div class="row" ng-cloak>
+    <ul class="sub-nav">
+      <li role="presentation" >
+        <a href="javascript:;" ng-click="$ctrl.toggleSidebar()">
+          <i class="fa fa-fw fa-bars"></i>
+        </a>
+      </li>
+      <li ng-repeat="item in $ctrl.navItems">
+        <a class="link" ui-sref="[[ item.state ]]" ui-sref-active="active">[[ item.text ]]</a></li>
+    </ul>
   </div>
   <div id="offcanvas" ng-class="{true: 'sidebar-open', false: 'sidebar-close'}[$ctrl.sidebar.open]">
     {% block main %}{% endblock %}

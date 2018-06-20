@@ -162,19 +162,20 @@ angular.module('ctrl', [])
     this.key = "_sidebarOpen"
     this.sidebar = {
         open: store.get(this.key) || false,
-        show: false,
+        enable: false,
     }
     this.toggleSidebar = (event) => {
+        if (!this.sidebar.enable) return;
         this.sidebar.open = ! this.sidebar.open;
         store.set(this.key, this.sidebar.open);
     }
     $scope.$on("popupConfirmModal", (event, data) => {
         $scope.$broadcast("resolveConfirm", data)
     })
-    $scope.$on("sidebar", (event, open, show) => {
+    $scope.$on("sidebar", (event, open, enable) => {
         this.sidebar = {
             open: open === null ? this.sidebar.open : open, 
-            show: show === null ? this.sidebar.show : show
+            enable: enable === null ? this.sidebar.enable : enable
         }
     })
     $scope.$on("confirmUpload", (event, input) => {
@@ -512,5 +513,6 @@ function($scope, $timeout, $base64, admin, translate){
 })
 .controller('stocktakeCtrl', function($scope){
 
+    $scope.$emit("sidebar", false, false);
 })
 .name;
