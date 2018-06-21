@@ -17,7 +17,10 @@ export default
 angular.module('component', [])
 .component('stockList', {
   template: stockListHtml,
-  controller: 'stockListCtrl'
+  controller: 'stockListCtrl',
+  bindings: {
+      sidebarOpen: "<",
+  } 
 })
 .component('stockForm', {
   template: stockFormHtml,
@@ -29,11 +32,17 @@ angular.module('component', [])
 })
 .component('flowinList', {
   template: flowHtml,
-  controller: 'flowinCtrl'
+  controller: 'flowinCtrl',
+  bindings: {
+      sidebarOpen: "<",
+  } 
 })
 .component('flowoutList', {
   template: flowHtml,
-  controller: 'flowoutCtrl'
+  controller: 'flowoutCtrl',
+  bindings: {
+      sidebarOpen: "<",
+  } 
 })
 .component('changepasswordform', {
   template: passwordFormHtml,
@@ -59,7 +68,10 @@ angular.module('component', [])
 })
 .component('stocktake', {
   template: stocktakeHtml,
-  controller: 'stocktakeCtrl'
+  controller: 'stocktakeCtrl',
+  bindings: {
+      sidebarOpen: "<",
+  } 
 })
 .component('stocktakeNew', {
   template: stocktakeNewHtml,

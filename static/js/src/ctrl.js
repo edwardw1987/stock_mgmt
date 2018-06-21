@@ -168,6 +168,7 @@ angular.module('ctrl', [])
         if (!this.sidebar.enable) return;
         this.sidebar.open = ! this.sidebar.open;
         store.set(this.key, this.sidebar.open);
+        $scope.$broadcast('toggleSidebar', this.sidebar.open);
     }
     $scope.$on("popupConfirmModal", (event, data) => {
         $scope.$broadcast("resolveConfirm", data)
@@ -177,6 +178,7 @@ angular.module('ctrl', [])
             open: open === null ? this.sidebar.open : open, 
             enable: enable === null ? this.sidebar.enable : enable
         }
+        store.set(this.key, this.sidebar.open);
     })
     $scope.$on("confirmUpload", (event, input) => {
         $scope.$broadcast("upload", input);
@@ -188,7 +190,8 @@ angular.module('ctrl', [])
         this.navItems = items;
     })
 })
-.controller('stockListCtrl', function($scope, $timeout, $state, scan, getCurWid){
+.controller('stockListCtrl', 
+    function($scope, $state, scan, getCurWid){
     $scope.stock = {
         warehouse_id: getCurWid(),
         show: false,
@@ -340,6 +343,10 @@ angular.module('ctrl', [])
     };
     $scope.stock.initStockList();
     $scope.$emit("sidebar", null, true);
+    // $scope.sidebarOpen = this.sidebarOpen;
+    $scope.$on('toggleSidebar', (e, sidebarOpen) => {
+        this.sidebarOpen = sidebarOpen;
+    })
 })
 .controller('stockFormCtrl', function($scope, $timeout, $state, scan, getCurWid){
     this.warehouse_id = getCurWid();
@@ -393,14 +400,14 @@ angular.module('ctrl', [])
     ];
     $scope.$emit('setNavItems', stockNavItems);
 })
-.controller('flowCtrl', ($scope) => {
+.controller('flowCtrl', function($scope){
     let flowNavItems = [
         {text: "扫码入库", state: 'flow.in'}, 
         {text: "扫码出库", state: 'flow.out'},
     ];
     $scope.$emit("setNavItems", flowNavItems)
 })
-.controller('flowinCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
+.controller('flowinCtrl', function($scope, $state, $timeout, scan, Flow, getCurWid){
     $scope.flow = new Flow($scope, $state, $timeout, scan, {
         method: 'flow-in', 
         wid: getCurWid(),
@@ -408,8 +415,11 @@ angular.module('ctrl', [])
     $scope.flow.initFlowList();
     $scope.flowText = "入库";   
     $scope.$emit("sidebar", null, true);
+    $scope.$on('toggleSidebar', (e, sidebarOpen) => {
+        this.sidebarOpen = sidebarOpen;
+    })
 })
-.controller('flowoutCtrl', ($scope, $state, $timeout, scan, Flow, getCurWid) => {
+.controller('flowoutCtrl', function($scope, $state, $timeout, scan, Flow, getCurWid){
     $scope.flow = new Flow($scope, $state, $timeout, scan, {
         method: "flow-out",
         wid: getCurWid(),
@@ -417,6 +427,9 @@ angular.module('ctrl', [])
     $scope.flow.initFlowList();
     $scope.flowText = "出库";
     $scope.$emit("sidebar", null, true);
+    $scope.$on('toggleSidebar', (e, sidebarOpen) => {
+        this.sidebarOpen = sidebarOpen;
+    })
 })
 .controller('stockFlowsCtrl', function($scope, $stateParams, scan){
     scan.listFlow({stockid: $stateParams.id}).then((resp) => {
@@ -514,5 +527,8 @@ function($scope, $timeout, $base64, admin, translate){
 .controller('stocktakeCtrl', function($scope){
 
     $scope.$emit("sidebar", null, true);
+    $scope.$on('toggleSidebar', (e, sidebarOpen) => {
+        this.sidebarOpen = sidebarOpen;
+    })
 })
 .name;

@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-20 15:19:13
+ * @Last Modified time: 2018-06-21 13:29:22
  */
 
 'use strict';
@@ -17,7 +17,10 @@ angular.module('router', [])
     $urlServiceProvider.rules.otherwise({ state: 'stock' });
     //
     // Now set up the states
-
+    function isSidebarOpen(){
+        let key = "_sidebarOpen"
+        return store.get(key) || false
+    }
     $stateProvider
     .state({
         name: 'stock',
@@ -28,12 +31,18 @@ angular.module('router', [])
     .state({
         name: 'stock.list',
         url: '/list',
-        component: 'stockList'
+        component: 'stockList',
+        resolve:{
+            sidebarOpen: isSidebarOpen
+        },
     })
     .state({
         name: 'stock.stocktake',
         url: '/stocktake',
         component: 'stocktake',
+        resolve:{
+            sidebarOpen: isSidebarOpen
+        },
         redirectTo: {state: 'stock.stocktake.detail', params: { id: 'latest' }}
     })
     .state({
@@ -79,11 +88,17 @@ angular.module('router', [])
         name: 'flow.in',
         url: '/in',
         component: 'flowinList',
+        resolve:{
+            sidebarOpen: isSidebarOpen
+        },
     })
     .state({
         name: 'flow.out',
         url: '/out',
         component: 'flowoutList',
+        resolve:{
+            sidebarOpen: isSidebarOpen
+        },
     })
 }])
 .name;

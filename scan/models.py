@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: wangwh8
 # @Date:   2018-02-08 15:50:00
-# @Last Modified by:   edward
-# @Last Modified time: 2018-06-16 19:54:06
+# @Last Modified by:   wangwh8
+# @Last Modified time: 2018-06-21 10:11:39
 from database import db
 from util import ModelMixin
 from sqlalchemy import func
@@ -116,7 +116,8 @@ class Warehouse(db.Model, ModelMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64))
     stocks = db.relationship('Stock', backref='warehouse', lazy='dynamic')
-
+    # stocktakes = db.relationship('Stocktake', backref='warehouse', lazy='dynamic')
+    
     @classmethod
     def has_warehouse(cls):
         one = cls.query.first()
@@ -128,100 +129,8 @@ class Warehouse(db.Model, ModelMixin):
         db.session.add(inst)
         db.session.commit()
         return inst
-# class TestArchive(object):
 
-#     def _create(self, model, kwargs):
-#         obj = model(**kwargs)
-#         db.session.add(obj)
-#         db.session.commit()
-#         return obj.to_dict()
 
-#     def _create_many(self, model, kwargsArr):
-#         # ret = []
-#         for kwargs in kwargsArr:
-#             obj = model(**kwargs)
-#             db.session.add(obj)
-#             # ret.append(obj.to_dict())
-#         db.session.commit()
-#         # return ret
-
-#     def create_build(self, createDict):
-#         return self._create(TestBuild, createDict)
-
-#     def create_test_output(self, createDict):
-#         return self._create(TestOutput, createDict)
-
-#     def create_test_item(self, createDict):
-#         return self._create(TestItem, createDict)
-
-#     def create_test_item_many(self, createArr):
-#         return self._create_many(TestItem, createArr)
-
-#     def create_xcc_bootperf(self, createDict):
-#         return self._create(XccBootPerf, createDict)
-
-#     def create_nessus(self, createDict):
-#         return self._create(Nessus, createDict)
-
-#     def create_redfish_perf_many(self, createArr):
-#         return self._create_many(RedfishPerf, createArr)
-
-#     def get_prev_xcc_perf(self, envDict):
-#         prev_testbuild_id = db.session.query(func.max(TestBuild.id)).scalar()
-#         if not prev_testbuild_id:
-#             return {}
-#         branch = envDict.get("Branch", {}).get("value")
-#         system = envDict.get("SYSTEM", {}).get("value")
-#         result = db.session.query(XccBootPerf, TestBuild).join(
-#             TestBuild, TestBuild.id == XccBootPerf.build_id).filter(
-#             TestBuild.branch == branch, 
-#             TestBuild.system == system,
-#             ).order_by(TestBuild.id.desc()).first()
-#         logging.info("prev result %s" % str(result))
-#         if not result:
-#             return {}
-#         p, b = result
-#         ret = {}
-#         ret.update(p.to_dict())
-#         ret.update(b.to_dict())
-#         logging.info(">>>>>>>>>>>>>>%s" % ret)
-#         return ret
-
-#     def get_avg_xcc_perf(self, envDict):
-#         ret = {}
-#         branch = envDict.get("Branch", {}).get("value")
-#         system = envDict.get("SYSTEM", {}).get("value")
-#         for col in XccBootPerf.get_model_columns():
-#             if col in {"id", "build_id"}:
-#                 continue
-#             col_inst = getattr(XccBootPerf, col)
-#             col_val = db.session.query(func.avg(col_inst)).filter(
-#                 TestBuild.branch == branch, 
-#                 TestBuild.system == system,
-#                 ).scalar()
-#             if col_val:
-#                 if col in {"activation_to_web", "image_size"}:
-#                     ret[col] = round(col_val, 2)
-#                 else:
-#                     ret[col] = int(col_val)
-#         return ret
-
-# class TestBuild(db.Model, ModelMixin):
+# class Stocktake(db.Model, ModelMixin):
 #     id = db.Column(db.Integer(), primary_key=True)
-#     build_id =  db.Column(db.Integer())
-#     build_image = db.Column(db.String(128))
-#     system = db.Column(db.String(128))
-#     product = db.Column(db.String(32))
-#     imm_ip = db.Column(db.String(32))
-#     branch = db.Column(db.String(128))
-#     enviroment = db.Column(db.Text())
-#     html = db.Column(db.Text())
-#     created = db.Column(db.DateTime, default=datetime.now)
-#     items = db.relationship('TestItem', backref='test_build', lazy='dynamic')
-
-# class TestItem(db.Model, ModelMixin):
-#     id = db.Column(db.Integer(), primary_key=True)
-#     name = db.Column(db.String(128), nullable=False)
-#     passed = db.Column(db.Integer(), default=0)
-#     failed = db.Column(db.Integer(), default=0)
-#     build_id = db.Column(db.Integer(), db.ForeignKey('test_build.id'))
+#     warehouse_id = db.Column(db.Integer(), db.ForeignKey('warehouse.id'))

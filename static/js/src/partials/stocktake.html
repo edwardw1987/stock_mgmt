@@ -19,6 +19,6 @@
       </a>
     </div>
 </div>
-<div class="col-md-12 col-xs-12">
-    <div ui-view></div>
+<div class="col-xs-12 transition" ng-class="{true: 'col-md-10', false: 'col-md-12'}[$ctrl.sidebarOpen]">
+  <div ui-view></div>
 </div>
