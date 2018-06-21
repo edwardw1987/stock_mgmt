@@ -373,7 +373,7 @@ class ApiStocktake(MethodView):
         jd = request.get_json()
         noneStockBarcode = self.get_none_stock_barcode(jd)
         if noneStockBarcode:
-            return {"success": False, "error": noneStockBarcode}
+            return jsonify({"success": False, "error": noneStockBarcode})
         self.create_stocktake(jd)
         return jsonify({"success": True})
         # {"name": xxx, "warehouse_id":, "barcodeLines":[] }
