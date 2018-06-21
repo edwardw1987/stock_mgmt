@@ -2,7 +2,7 @@
 * @Author: wangwh8
 * @Date:   2018-05-24 12:46:46
 * @Last Modified by:   wangwh8
-* @Last Modified time: 2018-06-21 11:19:43
+* @Last Modified time: 2018-06-21 16:05:27
 */
 /* layout */
 .submit-btn {
@@ -22,7 +22,7 @@ body{
 */}
 
 .form-layout label{
-    margin: 5px 0;
+    margin: .5rem 0;
 }
 .table-layout{
     /*border: 1px solid #ccc;*/

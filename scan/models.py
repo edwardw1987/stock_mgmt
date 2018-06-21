@@ -2,7 +2,7 @@
 # @Author: wangwh8
 # @Date:   2018-02-08 15:50:00
 # @Last Modified by:   wangwh8
-# @Last Modified time: 2018-06-21 10:11:39
+# @Last Modified time: 2018-06-21 16:55:04
 from database import db
 from util import ModelMixin
 from sqlalchemy import func
@@ -116,7 +116,7 @@ class Warehouse(db.Model, ModelMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64))
     stocks = db.relationship('Stock', backref='warehouse', lazy='dynamic')
-    # stocktakes = db.relationship('Stocktake', backref='warehouse', lazy='dynamic')
+    stocktakes = db.relationship('Stocktake', backref='warehouse', lazy='dynamic')
     
     @classmethod
     def has_warehouse(cls):
@@ -131,6 +131,17 @@ class Warehouse(db.Model, ModelMixin):
         return inst
 
 
-# class Stocktake(db.Model, ModelMixin):
-#     id = db.Column(db.Integer(), primary_key=True)
-#     warehouse_id = db.Column(db.Integer(), db.ForeignKey('warehouse.id'))
+class Stocktake(db.Model, ModelMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(64))
+    warehouse_id = db.Column(db.Integer(), db.ForeignKey('warehouse.id'))
+    results = db.relationship('Result', backref='stocktake', lazy='dynamic')
+    created = db.Column(db.DateTime, default=datetime.now)
+
+
+class Result(db.Model, ModelMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    stock_quantity = db.Column(db.Integer(), default=0)
+    quantity = db.Column(db.Integer(), default=0)
+    stocktake_id = db.Column(db.Integer(), db.ForeignKey('stocktake.id'))
+    stock_id = db.Column(db.Integer(), db.ForeignKey('stock.id'))

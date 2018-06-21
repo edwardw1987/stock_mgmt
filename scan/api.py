@@ -3,7 +3,7 @@ from flask import render_template, request, Blueprint, jsonify, abort, url_for
 from flask import redirect
 from flask.views import MethodView
 from flask_login import login_required
-from scan.models import Stock, Flow, db, Warehouse
+from scan.models import Stock, Flow, db, Warehouse, Stocktake, Result
 from collections import Counter
 from functools import wraps
 import util
@@ -123,7 +123,6 @@ class FlowMixin(object):
         1. [入库]和[出库]操作，条形码不存在
         2. [出库]操作,条形码对应得库存数量为0
         """
-        quantityField = self.get_quantity_field(jd["method"])
         for barcode in util.unique(jd["barcodeLines"]):
             stock = Stock.query.filter_by(
                 barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
@@ -269,6 +268,7 @@ class ApiFlowBatch(MethodView, FlowMixin):
                 f = Flow.create(createInfo)
         return jsonify(ret)
 
+
 class ApiStock(MethodView):
     decorators = [login_required]
 
@@ -330,6 +330,54 @@ class ApiStock(MethodView):
         return jsonify(ret)
 
 
+class ApiStocktake(MethodView):
+    # decorators = [login_required]
+
+    def query_stocktake_list(self):
+        warehouse_id = util.args_get('wid', required=True)
+        ret = []
+        for s in Stocktake.query.filter_by(warehouse_id=warehouse_id).order_by(Stocktake.id.desc()):
+            one = s.to_dict()
+            one["created"] = one["created"].strftime("%Y-%m-%d %X")
+            one["results"] = [r.to_dict() for r in s.results]
+            ret.append(one)
+        return ret
+
+    def get_none_stock_barcode(self, jd):
+        for barcode in util.unique(jd["barcodeLines"]):
+            stock = Stock.query.filter_by(
+                barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
+            if not stock:
+                return {"title": "条形码不存在", "content": barcode}
+
+    def create_stocktake(self, jd):
+        take_results = []
+        for barcode, count in Counter(jd["barcodeLines"]).items():
+            stock = Stock.query.filter_by(
+                barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
+            r = Result(stock_quantity=stock.quantity, quantity=count, stock_id=stock.id)
+            take_results.append(r)
+        take = Stocktake(
+            warehouse_id=jd["warehouse_id"], 
+            name=jd["name"],
+            results=take_results,
+            )
+        db.session.add(take)
+        db.session.commit()
+
+    def get(self):
+        ret = self.query_stocktake_list()
+        return jsonify(ret)
+
+    def post(self):
+        jd = request.get_json()
+        noneStockBarcode = self.get_none_stock_barcode(jd)
+        if noneStockBarcode:
+            return {"success": False, "error": noneStockBarcode}
+        self.create_stocktake(jd)
+        return jsonify({"success": True})
+        # {"name": xxx, "warehouse_id":, "barcodeLines":[] }
+
 @app.route("/m/options")
 def meas_options():
     data = Stock.get_measurement_map()
@@ -344,3 +392,4 @@ app.add_url_rule("/api/stock/", view_func=ApiStock.as_view("api.stock"))
 app.add_url_rule("/api/flow/", view_func=ApiFlow.as_view("api.flow"))
 app.add_url_rule("/api/flow/batch", view_func=ApiFlowBatch.as_view("api.flow.batch"))
 app.add_url_rule("/api/warehouse", view_func=ApiWarehouse.as_view("api.warehouse"))
+app.add_url_rule("/api/stocktake", view_func=ApiStocktake.as_view("api.stocktake"))

@@ -97,6 +97,22 @@ angular.module('rest', [])
             data: data,
         })
     }
+
+    this.listStocktake = function(data){
+        return $http({
+            url: "/api/stocktake",
+            params: data,
+            cache: true,
+        })
+    }
+
+    this.newStock = function(data){
+        return $http({
+            url: "/api/stocktake",
+            data: data,
+            method: "POST"
+        })
+    }
 })
 .service('admin', function($http){
     this.updateUserPassword = (data) => {

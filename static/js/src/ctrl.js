@@ -396,7 +396,7 @@ angular.module('ctrl', [])
 .controller('stockCtrl', function($scope){
     let stockNavItems = [
         {text: "库存列表", state: 'stock.list'}, 
-        {text: "库存盘点", state: 'stock.stocktake'},
+        {text: "库存盘点", state: 'stock.take'},
     ];
     $scope.$emit('setNavItems', stockNavItems);
 })
@@ -525,10 +525,23 @@ function($scope, $timeout, $base64, admin, translate){
     })
 })
 .controller('stocktakeCtrl', function($scope){
-
     $scope.$emit("sidebar", null, true);
     $scope.$on('toggleSidebar', (e, sidebarOpen) => {
         this.sidebarOpen = sidebarOpen;
     })
+})
+.controller('stocktakeNewCtrl', function($filter){
+    this.data = {
+        name: '新的盘点' + $filter('date')(new Date(), 'yyyyMMddHHmmss')
+    }
+    this.submit = () => {
+        console.log(this.data)
+    }
+})
+.controller('stocktakeDetailCtrl', function($scope, scan, getCurWid){
+    // scan.listStocktake({wid: getCurWid()}).then((resp) => {
+    //     this.stocktakeList = resp.data;
+    // })
+
 })
 .name;

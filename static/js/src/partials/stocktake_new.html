@@ -14,13 +14,24 @@
   </div>
 </div>
 <div class="col-md-6 col-xs-12">
-  <form class="form-inline" name="uploadForm" ng-submit="$ctrl.submit()">
-        <textarea ng-model="$ctrl.input" class="textarea textarea-height-fixed" required autofocus=""></textarea>
-        <div class="modal-footer">
-          <div class="btn-group">
-            <a href="javascript:history.back();" class="btn btn-default">取消</a>
-            <button type="submit" class="btn btn-danger" ng-disabled="uploadForm.$invalid">确认</button>
-          </div>
+  <div class="form-layout">  
+    <form class="form-inline" name="form" ng-submit="$ctrl.submit()">
+      <div class="row">    
+        <div class="input-group">
+          <label>名称</label>
+          <input type="text" class="form-control" placeholder="新的盘点" ng-model="$ctrl.data.name" required=""  autofocus="">
         </div>
-  </form>
+      </div>
+      <div class="row">    
+        <label>条形码</label>
+        <textarea ng-model="$ctrl.data.input" class="textarea" required></textarea>
+      </div>
+      <div class="modal-footer">
+        <div class="btn-group">
+          <a href="javascript:history.back();" class="btn btn-default">取消</a>
+          <button type="submit" class="btn btn-danger" ng-disabled="form.$invalid">确认</button>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>

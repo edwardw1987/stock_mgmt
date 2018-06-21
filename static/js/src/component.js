@@ -75,10 +75,10 @@ angular.module('component', [])
 })
 .component('stocktakeNew', {
   template: stocktakeNewHtml,
-  controller: ''
+  controller: 'stocktakeNewCtrl'
 })
 .component('stocktakeDetail', {
   template: stocktakeDetailHtml,
-  controller: ''
+  controller: 'stocktakeDetailCtrl'
 })
 .name;

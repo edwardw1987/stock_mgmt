@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-21 13:29:22
+ * @Last Modified time: 2018-06-21 18:19:50
  */
 
 'use strict';
@@ -37,38 +37,40 @@ angular.module('router', [])
         },
     })
     .state({
-        name: 'stock.stocktake',
-        url: '/stocktake',
+        name: 'stock.take',
+        url: '/take',
         component: 'stocktake',
         resolve:{
             sidebarOpen: isSidebarOpen
         },
-        redirectTo: {state: 'stock.stocktake.detail', params: { id: 'latest' }}
+        redirectTo: {state: 'stock.take.detail', params: { id: 'latest' }}
     })
     .state({
-        name: 'stock.stocktake.new',
+        name: 'stock.take.new',
         url: '/new',
         component: 'stocktakeNew'
     })
     .state({
-        name: 'stock.stocktake.detail',
+        name: 'stock.take.detail',
         url: '/{id}',
         component: 'stocktakeDetail',
         resolve: {
-          // Dependencies are annotated in "Inline Array Annotation"
-          latestStocktake: ['scan', function($http, scan) {
-            return {id: 999}
+          latestStocktake: ['scan', 'getCurWid', function(scan, getCurWid) {
+            return scan.listStocktake({wid: getCurWid()});
           }]
         },
         redirectTo: (trans) => {
           if (trans.params().id == 'latest'){
             let resolvePromise = trans.injector().getAsync('latestStocktake')
             return resolvePromise.then(resolveData => {
+                let lastestId;
+                if (resolveData.data.length > 0){
+                    lastestId = resolveData.data[0].id;
+                }
                 return { 
-                    state: 'stock.stocktake.detail', 
-                    params: { id: resolveData.id || 'latest' 
-                } 
-            }
+                    state: 'stock.take.detail', 
+                    params: {id: lastestId || 'latest'}
+                }
             });
           }
         }
