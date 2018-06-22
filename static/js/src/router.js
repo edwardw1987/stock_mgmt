@@ -2,7 +2,7 @@
  * @Author: wangwh8
  * @Date:   2017-06-27 13:54:38
  * @Last Modified by:   wangwh8
- * @Last Modified time: 2018-06-22 16:54:28
+ * @Last Modified time: 2018-06-22 17:40:13
  */
 
 'use strict';
@@ -64,10 +64,9 @@ angular.module('router', [])
                 if (resolveData.data.length > 0){
                     lastestId = resolveData.data[0].id;
                 }
-                return { 
-                    state: 'stock.take.detail', 
-                    params: {id: lastestId || 'latest'}
-                }
+
+                return lastestId ? {state: 'stock.take.detail', params: {id: lastestId} }
+                                 : {state: 'stock.take.new'}
             });
           }
         }
