@@ -339,7 +339,14 @@ class ApiStocktake(MethodView):
         for s in Stocktake.query.filter_by(warehouse_id=warehouse_id).order_by(Stocktake.id.desc()):
             one = s.to_dict()
             one["created"] = one["created"].strftime("%Y-%m-%d %X")
-            one["results"] = [r.to_dict() for r in s.results]
+            one_results = one["results"] = []
+            for r in s.results:
+                rd = r.to_dict()
+                stock = Stock.query.get(r.stock_id)
+                rd["name"] = stock.name
+                rd["barcode"] = stock.barcode
+                rd["measurement_text"] = stock.measurement_text
+                one_results.append(rd)
             ret.append(one)
         return ret
 

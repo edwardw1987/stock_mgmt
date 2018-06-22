@@ -524,24 +524,44 @@ function($scope, $timeout, $base64, admin, translate){
         this.error = input;
     })
 })
-.controller('stocktakeCtrl', function($scope){
-    $scope.$emit("sidebar", null, true);
-    $scope.$on('toggleSidebar', (e, sidebarOpen) => {
-        this.sidebarOpen = sidebarOpen;
-    })
+.controller('stocktakeCtrl', function($scope, $timeout){
 })
-.controller('stocktakeNewCtrl', function($filter){
+.controller('stocktakeNewCtrl', function($scope, $filter, $state, scan, getCurWid){
     this.data = {
         name: '新的盘点' + $filter('date')(new Date(), 'yyyyMMddHHmmss')
     }
     this.submit = () => {
-        console.log(this.data)
+        scan.newStocktake({
+            warehouse_id: getCurWid(),
+            name: this.data.name,
+            barcodeLines: this.data.input.split('\n').filter((e)=>{return e.trim();})
+        }).then((resp) => {
+            if (resp.data.success){
+                $state.go("stock.take");
+                // $scope.$emit("reload");
+            }else{
+                this.error = resp.data.error;
+            }
+        })
     }
+    $scope.$emit("sidebar", false, false);
+
 })
-.controller('stocktakeDetailCtrl', function($scope, scan, getCurWid){
+.controller('stocktakeDetailCtrl', function($scope, $state, $stateParams, scan, getCurWid){
     // scan.listStocktake({wid: getCurWid()}).then((resp) => {
     //     this.stocktakeList = resp.data;
     // })
-
+    this.sidebarOpen = true;
+    $scope.$emit("sidebar", true, true);
+    this.current = this.stocktakeList.data.find(e => e.id == $stateParams.id)
+    if (!this.current) return $state.go("stock.take");
+    $scope.$on('toggleSidebar', (e, sidebarOpen) => {
+        this.sidebarOpen = sidebarOpen;
+    })
+    this.getTotal = (key) => {
+        let total = 0;
+        this.current.results.forEach(e => total += e[key])
+        return total;
+    }
 })
 .name;

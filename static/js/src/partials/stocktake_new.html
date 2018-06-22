@@ -14,24 +14,28 @@
   </div>
 </div>
 <div class="col-md-6 col-xs-12">
-  <div class="form-layout">  
     <form class="form-inline" name="form" ng-submit="$ctrl.submit()">
-      <div class="row">    
-        <div class="input-group">
+    <div class="form-layout">  
+      <div>
+        <p>
           <label>名称</label>
+        </p>
+        <p>          
           <input type="text" class="form-control" placeholder="新的盘点" ng-model="$ctrl.data.name" required=""  autofocus="">
-        </div>
+        </p>
       </div>
-      <div class="row">    
+      <div>
+        <p>
         <label>条形码</label>
+        </p>
         <textarea ng-model="$ctrl.data.input" class="textarea" required></textarea>
       </div>
       <div class="modal-footer">
         <div class="btn-group">
-          <a href="javascript:history.back();" class="btn btn-default">取消</a>
+          <a ui-sref="stock.take" class="btn btn-default">取消</a>
           <button type="submit" class="btn btn-danger" ng-disabled="form.$invalid">确认</button>
         </div>
       </div>
+    </div>
     </form>
-  </div>
 </div>

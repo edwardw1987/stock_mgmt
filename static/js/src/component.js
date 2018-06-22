@@ -69,16 +69,20 @@ angular.module('component', [])
 .component('stocktake', {
   template: stocktakeHtml,
   controller: 'stocktakeCtrl',
+})
+.component('stocktakeNew', {
+  template: stocktakeNewHtml,
+  controller: 'stocktakeNewCtrl',
   bindings: {
       sidebarOpen: "<",
   } 
 })
-.component('stocktakeNew', {
-  template: stocktakeNewHtml,
-  controller: 'stocktakeNewCtrl'
-})
 .component('stocktakeDetail', {
   template: stocktakeDetailHtml,
-  controller: 'stocktakeDetailCtrl'
+  controller: 'stocktakeDetailCtrl',
+  bindings: {
+      sidebarOpen: "<",
+      stocktakeList: "<"
+  } 
 })
 .name;

@@ -1,87 +1,72 @@
-<div class="panel panel-info">
-  <div class="panel-heading">
-    <div class="row">
-      <div class="col-md-2">
-        <h3 class="title"> 库存盘点 </h3>
+<div class="sidebar">
+
+    <div class="text-center title">
+    <b>历史盘点</b>
+    <a class="no-underline pull-right" ui-sref="stock.take.new" ui-sref-active="active"> + 新建 </a>
+    </div>
+    <div class="list-group">
+      <div ng-repeat="item in $ctrl.stocktakeList.data" ng-cloak>      
+        <a ui-sref="stock.take.detail({id: item.id})" ui-sref-active="active" class="list-group-item">
+          <p class="list-group-item-heading">[[ item.name ]]</p>
+          <!-- <p class="list-group-item-text">[[ item.created ]]</p> -->
+        </a>
       </div>
-      <div class="col-md-3 col-md-offset-7">
-        <div class="input-group search">
-           <input ng-model="stock.searchText" ng-change="stock.onSearchTextChange()" type="text" class="form-control" placeholder="物料名称 | 条形码">
-         </div><!-- /input-group -->                
+
+    </div>
+</div>
+<div class="col-xs-12 transition" ng-class="{true: 'col-md-10', false: 'col-md-12'}[$ctrl.sidebarOpen]">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <div class="row">
+        <div class="col-md-8">
+          <h3 class="title">[[ $ctrl.current.name ]]</h3>
+          <p>[[ $ctrl.current.created ]]</p>
+        </div>
+        <div class="col-md-4">
+          <div class="input-group search">
+             <input ng-model="stock.searchText" ng-change="stock.onSearchTextChange()" type="text" class="form-control" placeholder="物料名称 | 条形码">
+           </div><!-- /input-group -->                
+        </div>
       </div>
     </div>
-  </div>
-  <div class="panel-body">
-    <div class="table-responsive">
-      <table class="table table-hover table-layout">
-        <thead>
-          <tr ng-cloak>
-            <th></th>
-            <th>物料名称</th>
-            <th>条形码</th>
-            <th>库存数量</th>
-            <th>盘点数量</th>
-            <th>结果</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>可乐</td>
-            <td>222222</td>
-            <td>3瓶</td>
-            <td>3瓶</td>
-            <td class="text-success"><i class="fa fa-fw fa-check"></i></td>
+    <div class="panel-body">
+      <div class="table-responsive">
+        <table class="table table-hover table-layout">
+          <thead>
+            <tr ng-cloak>
+              <th></th>
+              <th>物料名称</th>
+              <th>条形码</th>
+              <th>库存数量</th>
+              <th>盘点数量</th>
+              <th>结果</th>
+            </tr>
+          </thead>
+          <tbody>
 
-          </tr>
-          <tr class="danger">
-            <td>1</td>
-            <td>汽水</td>
-            <td>333333</td>
-            <td>3瓶</td>
-            <td>6瓶</td>
-            <td class="text-danger"><i class="fa fa-fw fa-remove"></i></td>
+            <tr ng-repeat="item in $ctrl.current.results" ng-cloak 
+            ng-class="{true: 'danger'}[item.stock_quantity != item.quantity]">
+              <td>[[ $index + 1 ]]</td>
+              <td>[[ item.name ]]</td>
+              <td>[[ item.barcode ]]</td>
+              <td>[[ item.stock_quantity + item.measurement_text ]]</td>
+              <td>[[ item.quantity + item.measurement_text ]]</td>
+              <td ng-if="item.stock_quantity == item.quantity" class="text-success"><i class="fa fa-fw fa-check"></i></td>
+              <td ng-if="item.stock_quantity != item.quantity" class="text-danger"><i class="fa fa-fw fa-remove"></i></td>
 
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td><b>共6件</b></td>
-            <td><b>共9件</b></td>
-            <td></td>
-          </tr>
-          <tr ng-repeat="item in stock.stockList" ng-cloak>
-            <td>[[ $index + 1 ]]</td>
-            <td><a ui-sref="stock.flows({id:item.id})">[[ item.name  ]]</a></td>
-            <td>[[ item.barcode ]]</td>
-            <td>[[ item.unitprice | currency: "&#165;&nbsp;" ]]</td>
-            <td>[[ item.quantity + item.measurement_text ]]</td>
-            <td>[[ item.unitprice * item.quantity | currency: "&#165;&nbsp;" ]]</td>
-            <td>
-              <span><i class="fa fa-fw fa-check-circle text-success"></i>入库</span>
-              <span><i class="fa fa-fw" ng-class="{true: 'fa-check-circle text-success', false: ' fa-times-circle text-danger'}[item.quantity > 0]"></i>出库</span>
-            </td>
-          </tr>
-          <tr>
-          </tr>
-      </tbody>
-    </table>
-    <p ng-show="stock.show && stock.stockList.length == 0" ng-cloak> 暂无数据 </p>
-    <div ng-show="stock.show">
-      <button
-        ng-click="stock.stockinAll()"
-        ng-disabled="!stock.hasCheckedItem()"
-        class="btn btn-primary"
-        >全部入库
-      </button>
-      <button
-        ng-click="stock.stockoutAll()"
-        ng-disabled="!stock.checkedFlowoutAllowed()"
-        class="btn btn-warning"
-        >全部出库
-      </button> 
-    </div>            
-  </div>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td><b>共[[ $ctrl.getTotal('stock_quantity') ]]件</b></td>
+              <td><b>共[[ $ctrl.getTotal('quantity') ]]件</b></td>
+              <td></td>
+            </tr>
+        </tbody>
+      </table>
+      <p ng-show="stock.show && stock.stockList.length == 0" ng-cloak> 暂无数据 </p>         
+    </div>
+    </div>
   </div>
 </div>

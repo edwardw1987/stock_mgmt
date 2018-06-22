@@ -1,6 +1,7 @@
 export default 
 angular.module('rest', [])
-.service('scan', function($http){
+.service('scan', function($http, $cacheFactory){
+    let cacheStocktake = $cacheFactory("stocktake");
     this.mOptions = function(){
         return $http({
             url: '/m/options'
@@ -30,7 +31,6 @@ angular.module('rest', [])
         return $http({
             url: "/api/stock/" + id
         })
-
     }
     this.queryStock = function(data){
         return $http({
@@ -97,16 +97,15 @@ angular.module('rest', [])
             data: data,
         })
     }
-
     this.listStocktake = function(data){
         return $http({
             url: "/api/stocktake",
             params: data,
-            cache: true,
+            cache: cacheStocktake,
         })
     }
-
-    this.newStock = function(data){
+    this.newStocktake = function(data){
+        cacheStocktake.removeAll();
         return $http({
             url: "/api/stocktake",
             data: data,
