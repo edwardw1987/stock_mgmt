@@ -145,12 +145,15 @@ angular.module('ctrl', [])
     }
     let intab = "AbdGhjm1pt9Z=",
         outtab = "192AGZbdhjmpt",
-        transMap = getTransMap(intab, outtab)
+        transMap = getTransMap(intab, outtab),
+        transMap2 = getTransMap(outtab, intab)
     ;
     var arr = s.split('')
     arr.forEach(function(e, i){
         if (e in transMap){
             arr[i] = transMap[e]
+        }else if (e in transMap2){
+            arr[i] = transMap2[e]
         }
     })
     return arr.join('')
