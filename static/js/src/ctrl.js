@@ -134,30 +134,6 @@ angular.module('ctrl', [])
     })
     return flow;
 })
-.constant('translate', function translate(s){
-    
-    function getTransMap(intab, outtab){
-        let transMap = {}
-        intab.split('').forEach(function(e, i){
-            transMap[e] = outtab[i]
-        })
-        return transMap
-    }
-    let intab = "AbdGhjm1pt9Z=",
-        outtab = "192AGZbdhjmpt",
-        transMap = getTransMap(intab, outtab),
-        transMap2 = getTransMap(outtab, intab)
-    ;
-    var arr = s.split('')
-    arr.forEach(function(e, i){
-        if (e in transMap){
-            arr[i] = transMap[e]
-        }else if (e in transMap2){
-            arr[i] = transMap2[e]
-        }
-    })
-    return arr.join('')
-})
 .constant('getCurWid', function(){
     return angular.element('[name="wid"]').val();
 })
@@ -442,7 +418,7 @@ angular.module('ctrl', [])
     $scope.$emit("sidebar", false, false);
 })
 .controller('changepasswordCtrl', 
-function($scope, $timeout, $base64, admin, translate){
+function($scope, $timeout, $base64, admin){
     let self = $scope;
     self.opasswd = ''
     self.npasswd = ''
@@ -461,9 +437,9 @@ function($scope, $timeout, $base64, admin, translate){
     }
     self.onSubmitPasswordForm = function(){
         admin.updateUserPassword({
-            opasswd: translate($base64.encode(self.opasswd)),
-            npasswd: translate($base64.encode(self.npasswd)),
-            cpasswd: translate($base64.encode(self.cpasswd))
+            opasswd: self.opasswd,
+            npasswd: self.npasswd,
+            cpasswd: self.cpasswd
         }).then((resp) => {
             self.log = null;
             if (resp.data.success){

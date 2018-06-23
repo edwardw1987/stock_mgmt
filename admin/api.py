@@ -82,9 +82,9 @@ class UserPassword(MethodView):
 
     def post(self):
         jd = request.get_json()
-        op = util.string_cooker.decode(jd["opasswd"])
-        np = util.string_cooker.decode(jd["npasswd"])
-        cp = util.string_cooker.decode(jd["cpasswd"])
+        op = jd["opasswd"]
+        np = jd["npasswd"]
+        cp = jd["cpasswd"]
         if not current_user.confirm_password(op):
             ret = {"success": False, "error": 1}
         elif np != cp:
