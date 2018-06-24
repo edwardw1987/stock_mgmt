@@ -2,7 +2,7 @@
 # @Author: wangwh8
 # @Date:   2018-02-08 15:50:00
 # @Last Modified by:   edward
-# @Last Modified time: 2018-06-24 15:28:43
+# @Last Modified time: 2018-06-24 15:44:25
 from database import db
 from util import ModelMixin
 from sqlalchemy import func
@@ -84,6 +84,7 @@ class Stock(db.Model, ModelMixin):
         u"条": 3,
         u"瓶": 4,
         u"斤": 5,
+        u"箱": 6,
         }
 
     @property
