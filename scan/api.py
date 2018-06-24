@@ -122,17 +122,25 @@ class FlowMixin(object):
         """
         1. [入库]和[出库]操作，条形码不存在
         2. [出库]操作,条形码对应得库存数量为0
+        3. [出库]操作,条形码对应得出库数量不得大于库存数量
         """
         for barcode in util.unique(jd["barcodeLines"]):
             stock = Stock.query.filter_by(
                 barcode=barcode, warehouse_id=jd["warehouse_id"]).first()
             if not stock:
                 return {"title": "条形码不存在", "content": barcode}
-            if jd["method"] == "flow-out" and not stock.quantity:
-                return {
-                    "title": "库存[%s]数量为0" % stock.name, 
-                    "content": "条形码:%s" % (barcode)
-                }
+            if jd["method"] == "flow-out":
+                if not stock.quantity:
+                    return {
+                        "title": "库存[%s]数量为0" % stock.name,
+                        "content": "条形码:%s" % (barcode)
+                    }
+                elif Counter(jd["barcodeLines"])[barcode] > stock.quantity:
+                    return {
+                        "title": "库存[%s]出库数量不得大于库存数量[%d]" % (stock.name, stock.quantity),
+                        "content": "条形码:%s" % (barcode)
+                    }
+
 
 
 @app.route("/stock/input", methods=["POST"])

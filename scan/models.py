@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # @Author: wangwh8
 # @Date:   2018-02-08 15:50:00
-# @Last Modified by:   wangwh8
-# @Last Modified time: 2018-06-21 16:55:04
+# @Last Modified by:   edward
+# @Last Modified time: 2018-06-24 15:28:43
 from database import db
 from util import ModelMixin
 from sqlalchemy import func
@@ -48,7 +48,7 @@ class Flow(db.Model, ModelMixin):
 class Stock(db.Model, ModelMixin):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(64))
-    barcode = db.Column(db.Integer())
+    barcode = db.Column(db.String(32))
     unitprice = db.Column(db.Float(), default=0)
     quantity =  db.Column(db.Integer(), default=0)
     measurement = db.Column(db.Integer())
